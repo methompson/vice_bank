@@ -6,7 +6,7 @@
     "src/**/*.vue",
     "src/**/*",
     "src/**/*.vue",
-    "packages/img_gen_submodule/src/**/*"
+    "packages/vice_bank_submodule/src/**/*"
   ],
   "exclude": [
     "**/*.spec.ts",

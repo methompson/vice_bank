@@ -1,6 +1,20 @@
+import { isArrayOfGenerator, typeGuardGenerator } from 'tcheck';
+
+import {
+  ViceBankUser,
+  type ViceBankUserJSON,
+} from '@vice_bank/models/vice_bank_user';
 import { getAuthToken, getBaseUrl } from './common';
 
-export async function getVBUsers() {
+interface GetVBUsersResponse {
+  users: ViceBankUserJSON[];
+}
+
+const isGetVBUsersResponse = typeGuardGenerator<GetVBUsersResponse>({
+  users: isArrayOfGenerator(ViceBankUser.isViceBankUserJSON),
+});
+
+export async function getVBUsers(): Promise<ViceBankUser[]> {
   const url = `${getBaseUrl()}/vice_bank/users`;
 
   const headers = new Headers();
@@ -11,10 +25,106 @@ export async function getVBUsers() {
   });
 
   const dat = await response.json();
+
+  if (!response.ok) {
+    console.error('Error fetching users:', response.statusText);
+    throw new Error(`Error fetching users`);
+  }
+
+  if (!isGetVBUsersResponse(dat)) {
+    throw new Error('Invalid response from server');
+  }
+
+  console.log('data', dat);
+
+  return dat.users.map((user) => new ViceBankUser(user));
 }
 
-export async function addVBUser() {}
+interface AddVBUserPayload {
+  name: string;
+  currentTokens: number;
+}
+export async function addVBUser(
+  payload: AddVBUserPayload,
+): Promise<ViceBankUser> {
+  const url = `${getBaseUrl()}/vice_bank/addUser`;
 
-export async function updateVBUser() {}
+  const headers = new Headers();
+  headers.append('Content-Type', 'application/json');
+  headers.append('authorization', await getAuthToken());
 
-export async function deleteVBUser() {}
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      userToAdd: payload,
+    }),
+  });
+
+  const dat = await response.json();
+
+  if (!response.ok) {
+    console.error('Error adding user:', response.statusText);
+    throw new Error(`Error adding user`);
+  }
+
+  if (!ViceBankUser.isViceBankUserJSON(dat.user)) {
+    throw new Error('Invalid response from server');
+  }
+
+  return new ViceBankUser(dat.user);
+}
+
+export async function updateVBUser(
+  updatedUser: ViceBankUser,
+): Promise<ViceBankUser> {
+  const url = `${getBaseUrl()}/vice_bank/updateUser`;
+
+  const headers = new Headers();
+  headers.append('Content-Type', 'application/json');
+  headers.append('authorization', await getAuthToken());
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ vbUser: updatedUser.toJSON() }),
+  });
+
+  const dat = await response.json();
+
+  if (!response.ok) {
+    console.error('Error updating user:', response.statusText);
+    throw new Error(`Error updating user`);
+  }
+  if (!ViceBankUser.isViceBankUserJSON(dat.user)) {
+    throw new Error('Invalid response from server');
+  }
+  return new ViceBankUser(dat.user);
+}
+
+export async function deleteVBUser(vbUserId: string): Promise<ViceBankUser> {
+  const url = `${getBaseUrl()}/vice_bank/deleteUser`;
+
+  const headers = new Headers();
+  headers.append('Content-Type', 'application/json');
+  headers.append('authorization', await getAuthToken());
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ vbUserId }),
+  });
+
+  const dat = await response.json();
+
+  if (!response.ok) {
+    console.error('Error deleting user:', response.statusText);
+    throw new Error(`Error deleting user`);
+  }
+
+  if (!ViceBankUser.isViceBankUserJSON(dat.user)) {
+    throw new Error('Invalid response from server');
+  }
+
+  return new ViceBankUser(dat.user);
+}
