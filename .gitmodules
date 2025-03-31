@@ -1,0 +1,3 @@
+[submodule "packages/vice_bank_submodule"]
+	path = packages/vice_bank_submodule
+	url = https://github.com/methompson/vice_bank_submodule.git
