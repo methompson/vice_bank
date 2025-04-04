@@ -27,7 +27,7 @@ export async function getVBUsers(): Promise<ViceBankUser[]> {
   const dat = await response.json();
 
   if (!response.ok) {
-    console.error('Error fetching users:', response.statusText);
+    console.error('Error fetching users:', dat);
     throw new Error(`Error fetching users`);
   }
 
@@ -64,7 +64,7 @@ export async function addVBUser(
   const dat = await response.json();
 
   if (!response.ok) {
-    console.error('Error adding user:', response.statusText);
+    console.error('Error adding user:', dat);
     throw new Error(`Error adding user`);
   }
 
@@ -93,7 +93,7 @@ export async function updateVBUser(
   const dat = await response.json();
 
   if (!response.ok) {
-    console.error('Error updating user:', response.statusText);
+    console.error('Error updating user:', dat);
     throw new Error(`Error updating user`);
   }
   if (!ViceBankUser.isViceBankUserJSON(dat.user)) {
@@ -118,7 +118,7 @@ export async function deleteVBUser(vbUserId: string): Promise<ViceBankUser> {
   const dat = await response.json();
 
   if (!response.ok) {
-    console.error('Error deleting user:', response.statusText);
+    console.error('Error deleting user:', dat);
     throw new Error(`Error deleting user`);
   }
 

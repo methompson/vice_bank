@@ -1,8 +1,11 @@
 <template>
   <slot v-if="isLoggedIn" />
+
   <LoginForm v-else-if="showLoginForm" />
+
   <div v-else>
     <h1>Loading...</h1>
+
     <p>Please wait while we load your data.</p>
   </div>
 </template>
@@ -18,7 +21,7 @@ import {
 import { computed, onBeforeMount, ref, type Ref } from 'vue';
 
 import { getFirebaseConfig } from '@/utils/get_firebase_config';
-import LoginForm from '@/ui/components/login_form.vue';
+import LoginForm from '@/views/components/login_form.vue';
 
 const userInfo: Ref<User | null> = ref(null);
 
