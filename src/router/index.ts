@@ -9,6 +9,16 @@ const router = createRouter({
       component: () => import('@/views/pages/home.vue'),
     },
     {
+      path: '/deposits',
+      name: 'deposits',
+      component: () => import('@/views/pages/deposits.vue'),
+    },
+    {
+      path: '/withdrawals',
+      name: 'withdrawals',
+      component: () => import('@/views/pages/withdrawals.vue'),
+    },
+    {
       path: '/settings',
       name: 'settings',
       component: () => import('@/views/pages/settings.vue'),

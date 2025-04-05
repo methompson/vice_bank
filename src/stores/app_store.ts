@@ -83,6 +83,23 @@ export const useAppStore = defineStore('appStore', () => {
 
   // #endregion
 
+  // #region Themes
+  const isDarkModeState = ref(false);
+  const isDarkMode = computed({
+    get: () => isDarkModeState.value,
+    set: (value: boolean) => {
+      isDarkModeState.value = value;
+    },
+  });
+
+  function getIsDarkMode(): boolean {
+    return (
+      window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    );
+  }
+  // #endregion
+
   async function login(email: string, password: string) {
     const authInst = getAuth();
 
@@ -112,5 +129,9 @@ export const useAppStore = defineStore('appStore', () => {
     setErrorMessage,
     setInfoMessage,
     setSuccessMessage,
+
+    // Messaging
+    isDarkMode,
+    getIsDarkMode,
   };
 });

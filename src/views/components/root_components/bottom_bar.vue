@@ -6,13 +6,13 @@
       <span>Home</span>
     </VBtn>
 
-    <VBtn value="depoists">
+    <VBtn @click="navigateTo('/deposits')" value="depoists">
       <VIcon>mdi-bank</VIcon>
 
       <span>Deposits</span>
     </VBtn>
 
-    <VBtn value="withdrawals">
+    <VBtn @click="navigateTo('/withdrawals')" value="withdrawals">
       <VIcon>mdi-account-cash-outline</VIcon>
 
       <span>Withdrawals</span>

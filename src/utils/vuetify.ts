@@ -9,6 +9,8 @@ const lightTheme: ThemeDefinition = {
   colors: {
     primary: '#03A9F4',
     'primary-darken-1': '#0277BD',
+    'surface-light': '#E1F5FE',
+    'surface-dark': '#B3E5FC',
     error: '#FF1744',
   },
 };
@@ -17,6 +19,8 @@ const darkTheme: ThemeDefinition = {
   colors: {
     primary: '#0277BD',
     'primary-darken-1': '#01579B',
+    'surface-light': '#01579B',
+    'surface-dark': '#003561',
     error: '#FF1744',
   },
 };

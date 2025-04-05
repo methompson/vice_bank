@@ -1,28 +1,55 @@
 <template>
-  <template v-if="showUserSelect">
-    <VRow>
-      <VCol class="text-center">
-        <div>No User Selected</div>
-        <div>Select a User</div>
-      </VCol>
-    </VRow>
-    <UserSelect />
-  </template>
-  <div v-else>Show Home</div>
+  <NoUserSelected>
+    <div>
+      <VRow class="pa-2">
+        <VCol cols="12" sm="6">
+          <VCard :color="cardColor">
+            <VCardTitle> Purchases </VCardTitle>
+
+            <VCardText>
+              <VRow>
+                <VCol cols="12">
+                  <div>Past Week Purchases</div>
+                </VCol>
+                <VCol cols="12">
+                  <div>0</div>
+                </VCol>
+              </VRow>
+            </VCardText>
+          </VCard>
+        </VCol>
+
+        <VCol cols="12" sm="6">
+          <VCard :color="cardColor">
+            <VCardTitle> Deposits </VCardTitle>
+
+            <VCardText>
+              <VRow>
+                <VCol cols="12">
+                  <div>Past Week Deposits</div>
+                </VCol>
+                <VCol cols="12">
+                  <div>0</div>
+                </VCol>
+              </VRow>
+            </VCardText>
+          </VCard>
+        </VCol>
+      </VRow>
+    </div>
+  </NoUserSelected>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 
-import { useViceBankStore } from '@/stores/vice_bank_store';
-import UserSelect from '@/views/components/user_select.vue';
+import { useAppStore } from '@/stores/app_store';
 
-const vbStore = useViceBankStore();
+import NoUserSelected from '@/views/components/root_components/no_user_selected.vue';
 
-const { currentUser } = storeToRefs(vbStore);
+const appStore = useAppStore();
 
-const showUserSelect = computed(() => {
-  return !currentUser.value;
+const cardColor = computed(() => {
+  return appStore.isDarkMode ? 'surface-dark' : 'surface-light';
 });
 </script>
