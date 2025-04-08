@@ -1,7 +1,7 @@
 import { isArrayOfGenerator } from 'tcheck';
 
 import { Action, type ActionJSON } from '@vice_bank/models/action';
-import { getAuthToken, getBaseUrl } from '@/api/common';
+import { getAuthToken, getBaseUrl } from '@/utils/auth';
 
 const isActionJSONArray = isArrayOfGenerator<ActionJSON>(Action.isActionJSON);
 
@@ -22,11 +22,13 @@ export async function getActions(vbUserId: string): Promise<Action[]> {
     throw new Error(`Error getting users`);
   }
 
-  if (!isActionJSONArray(dat)) {
+  const actions = dat.actions;
+
+  if (!isActionJSONArray(actions)) {
     throw new Error('Invalid response from server');
   }
 
-  return dat.map((action) => new Action(action));
+  return actions.map((action) => new Action(action));
 }
 
 export async function addAction(action: Action): Promise<Action> {
@@ -62,6 +64,8 @@ export async function addAction(action: Action): Promise<Action> {
   }
 
   if (!Action.isActionJSON(dat.action)) {
+    const test = Action.actionJSONTest(dat.action);
+    console.error(`Invalid response from server: ${test.join(',')}`, dat);
     throw new Error('Invalid response from server');
   }
 

@@ -1,7 +1,7 @@
 <template>
   <NoUserSelected>
-    <div>
-      <VRow class="pa-2">
+    <VContainer>
+      <VRow>
         <VCol cols="12" sm="6">
           <VCard :color="cardColor">
             <VCardTitle> Purchases </VCardTitle>
@@ -36,7 +36,7 @@
           </VCard>
         </VCol>
       </VRow>
-    </div>
+    </VContainer>
   </NoUserSelected>
 </template>
 

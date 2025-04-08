@@ -16,3 +16,14 @@ export async function getAuthToken() {
 
   return token;
 }
+
+export function getUserId() {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (user === null) {
+    throw new Error('No user logged in');
+  }
+
+  return user.uid;
+}

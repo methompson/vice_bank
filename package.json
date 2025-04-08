@@ -14,9 +14,10 @@
     "pinia": "^3.0.1",
     "tcheck": "^1.2.5",
     "uuid": "^11.1.0",
+    "vice-bank": "file:packages/vice_bank_submodule",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
-    "vuetify": "^3.7.19"
+    "vuetify": "^3.8.0"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.1",

@@ -1,7 +1,7 @@
 import { isArrayOfGenerator } from 'tcheck';
 
 import { Task } from '@vice_bank/models/task';
-import { getAuthToken, getBaseUrl } from '@/api/common';
+import { getAuthToken, getBaseUrl } from '@/utils/auth';
 
 const isTaskJSONArray = isArrayOfGenerator<Task>(Task.isTaskJSON);
 
@@ -22,11 +22,13 @@ export async function getTasks(vbUserId: string): Promise<Task[]> {
     throw new Error(`Error getting users`);
   }
 
-  if (!isTaskJSONArray(dat)) {
+  const tasks = dat.tasks;
+
+  if (!isTaskJSONArray(tasks)) {
     throw new Error('Invalid response from server');
   }
 
-  return dat.map((task) => new Task(task));
+  return tasks.map((task) => new Task(task));
 }
 
 export async function addTask(task: Task): Promise<Task> {

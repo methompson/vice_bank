@@ -2,16 +2,19 @@ import { defineStore } from 'pinia';
 import { computed, ref, type ComputedRef, type Ref } from 'vue';
 
 import { arrayToObject } from '@/utils/array_to_obj';
+
 import type { ViceBankUser } from '@vice_bank/models/vice_bank_user';
+import type { Action } from '@vice_bank/models/action';
+import type { Task } from '@vice_bank/models/task';
 
 import * as usersAPI from '@/api/vb_users';
+import * as actionsAPI from '@/api/actions';
+import * as tasksAPI from '@/api/tasks';
 
 export const useViceBankStore = defineStore('viceBankStore', () => {
   // #region Users
   const vbUsersState: Ref<ViceBankUser[]> = ref([]);
-  const vbUsers: ComputedRef<ViceBankUser[]> = computed(
-    () => vbUsersState.value,
-  );
+  const vbUsers = computed(() => [...vbUsersState.value]);
   const userMap = computed(() => {
     return arrayToObject(vbUsers.value, (u) => u.id);
   });
@@ -58,6 +61,61 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
 
   // #endregion
 
+  // #region Actions
+
+  const actionsState: Ref<Action[]> = ref([]);
+  const actions = computed(() => [...actionsState.value]);
+  const actionsMap = computed(() => arrayToObject(actions.value, (a) => a.id));
+
+  async function getActions(vbUserId: string) {
+    const result = await actionsAPI.getActions(vbUserId);
+    actionsState.value = result;
+  }
+
+  async function addNewAction(action: Action) {
+    await actionsAPI.addAction(action);
+    await getActions(action.vbUserId);
+  }
+
+  async function updateAction(updatedAction: Action) {
+    await actionsAPI.updateAction(updatedAction);
+    await getActions(updatedAction.vbUserId);
+  }
+
+  async function deleteAction(action: Action) {
+    await actionsAPI.deleteAction(action.id);
+    await getActions(action.vbUserId);
+  }
+
+  // #endregion
+
+  // #region Tasks
+
+  const tasksState: Ref<Task[]> = ref([]);
+  const tasks = computed(() => [...tasksState.value]);
+  const tasksMap = computed(() => arrayToObject(tasks.value, (t) => t.id));
+
+  async function getTasks(vbUserId: string) {
+    const result = await tasksAPI.getTasks(vbUserId);
+    tasksState.value = result;
+  }
+
+  async function addNewTask(task: Task) {
+    await tasksAPI.addTask(task);
+    await getTasks(task.vbUserId);
+  }
+
+  async function updateTask(task: Task) {
+    await tasksAPI.updateTask(task);
+    await getTasks(task.vbUserId);
+  }
+
+  async function deleteTask(task: Task) {
+    await tasksAPI.deleteTask(task.id);
+    await getTasks(task.vbUserId);
+  }
+  // #endregion
+
   return {
     // Users
     vbUsers,
@@ -68,5 +126,21 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
     addUser,
     updateUser,
     deleteUser,
+
+    // actions
+    actions,
+    actionsMap,
+    getActions,
+    addNewAction,
+    updateAction,
+    deleteAction,
+
+    // tasks
+    tasks,
+    tasksMap,
+    getTasks,
+    addNewTask,
+    updateTask,
+    deleteTask,
   };
 });

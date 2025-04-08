@@ -2,14 +2,17 @@
   <VApp>
     <VMain>
       <AuthView>
-        <TopBar />
+        <DataManager>
+          <TopBar />
 
-        <RouterView />
+          <RouterView />
 
-        <BottomBar />
+          <BottomBar />
+        </DataManager>
       </AuthView>
     </VMain>
 
+    <Snackbar />
     <ThemeView />
   </VApp>
 </template>
@@ -22,6 +25,8 @@ import TopBar from '@/views/components/root_components/top_bar.vue';
 import BottomBar from '@/views/components/root_components/bottom_bar.vue';
 
 import ThemeView from '@/views/components/root_components/theme_view.vue';
+import Snackbar from '@/views/components/root_components/snackbar.vue';
+import DataManager from '@/views/components/root_components/data_manager.vue';
 </script>
 
 <style scoped></style>

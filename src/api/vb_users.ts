@@ -4,7 +4,7 @@ import {
   ViceBankUser,
   type ViceBankUserJSON,
 } from '@vice_bank/models/vice_bank_user';
-import { getAuthToken, getBaseUrl } from './common';
+import { getAuthToken, getBaseUrl } from '../utils/auth';
 
 interface GetVBUsersResponse {
   users: ViceBankUserJSON[];

@@ -100,6 +100,7 @@ export const useAppStore = defineStore('appStore', () => {
   }
   // #endregion
 
+  // #region Auth
   async function login(email: string, password: string) {
     const authInst = getAuth();
 
@@ -117,6 +118,8 @@ export const useAppStore = defineStore('appStore', () => {
     await signOut(auth);
   }
 
+  // #endregion
+
   return {
     // auth
     login,
@@ -129,8 +132,9 @@ export const useAppStore = defineStore('appStore', () => {
     setErrorMessage,
     setInfoMessage,
     setSuccessMessage,
+    clearMessage,
 
-    // Messaging
+    // Theme
     isDarkMode,
     getIsDarkMode,
   };

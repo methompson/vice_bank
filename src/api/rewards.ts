@@ -1,5 +1,5 @@
 import { Reward, type RewardJSON } from '@vice_bank/models/reward';
-import { getAuthToken, getBaseUrl } from './common';
+import { getAuthToken, getBaseUrl } from '../utils/auth';
 import { isArrayOfGenerator } from 'tcheck';
 
 const isRewardsJSONArray = isArrayOfGenerator<RewardJSON>(Reward.isRewardJSON);
