@@ -76,7 +76,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { isNumber, isString, typeGuardGenerator } from 'tcheck';
 
 import { Action, type ActionJSON } from '@vice_bank/models/action';
-import { getUserId } from '@/utils/auth';
+import { useViceBankStore } from '@/stores/vice_bank_store';
+import { useAppStore } from '@/stores/app_store';
 
 const props = defineProps<{
   action?: Action;
@@ -85,6 +86,9 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'saveAction', action: Action): void;
 }>();
+
+const vbStore = useViceBankStore();
+const appStore = useAppStore();
 
 const name: Ref<string> = ref('');
 const conversionUnit: Ref<string> = ref('');
@@ -145,11 +149,25 @@ const isInputValid = computed(() => {
 
 function saveAction() {
   const id = props.action ? props.action.id : uuidv4();
-  const vbUserId = props.action ? props.action.vbUserId : getUserId();
+  const vbUserId = props.action
+    ? props.action.vbUserId
+    : vbStore.currentUser?.id;
+
+  if (!vbUserId) {
+    console.error('No user ID found');
+    appStore.setErrorMessage({
+      message: 'Invalid VB User',
+    });
+    return;
+  }
+
   const dat = getPotentialData();
 
   if (!isValidActionInput(dat)) {
     console.error('Invalid action input');
+    appStore.setErrorMessage({
+      message: 'Invalid action input',
+    });
     return;
   }
 

@@ -55,8 +55,9 @@ import { computed, onBeforeMount, ref, type Ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Frequency, isFrequency } from '@vice_bank/models/frequency';
-import { getUserId } from '@/utils/auth';
 import { Task, type TaskJSON } from '@vice_bank/models/task';
+import { useViceBankStore } from '@/stores/vice_bank_store';
+import { useAppStore } from '@/stores/app_store';
 
 const props = defineProps<{
   task?: Task;
@@ -64,6 +65,9 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'saveTask', task: Task): void;
 }>();
+
+const vbStore = useViceBankStore();
+const appStore = useAppStore();
 
 const name = ref('');
 const tokensEarned: Ref<number | null> = ref(0);
@@ -108,11 +112,22 @@ const isInputValid = computed(() => {
 
 function saveTask() {
   const id = props.task ? props.task.id : uuidv4();
-  const vbUserId = props.task ? props.task.vbUserId : getUserId();
+
+  const vbUserId = props.task ? props.task.vbUserId : vbStore.currentUser?.id;
+  if (!vbUserId) {
+    appStore.setErrorMessage({
+      message: 'No user selected',
+    });
+    return;
+  }
+
   const dat = getPotentialData();
 
   if (!isValidTaskInput(dat)) {
     console.error('Invalid task input:', dat);
+    appStore.setErrorMessage({
+      message: 'Invalid task input',
+    });
     return;
   }
 

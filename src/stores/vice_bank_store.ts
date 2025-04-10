@@ -10,6 +10,10 @@ import type { Task } from '@vice_bank/models/task';
 import * as usersAPI from '@/api/vb_users';
 import * as actionsAPI from '@/api/actions';
 import * as tasksAPI from '@/api/tasks';
+import * as actionDepositsAPI from '@/api/action_deposits';
+import * as taskDepositsAPI from '@/api/task_deposits';
+import type { ActionDeposit } from '@vice_bank/models/action_deposit';
+import type { TaskDeposit } from '@vice_bank/models/task_deposit';
 
 export const useViceBankStore = defineStore('viceBankStore', () => {
   // #region Users
@@ -116,6 +120,66 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
   }
   // #endregion
 
+  // #region Action Deposits
+
+  const actionDepositsState: Ref<ActionDeposit[]> = ref([]);
+  const actionDeposits = computed(() => [...actionDepositsState.value]);
+  const actionDepositsMap = computed(() =>
+    arrayToObject(actionDeposits.value, (t) => t.id),
+  );
+
+  async function getActionDeposits(vbUserId: string) {
+    const result = await actionDepositsAPI.getActionDeposits(vbUserId);
+    actionDepositsState.value = result;
+  }
+
+  async function addNewActionDeposit(actionDeposit: ActionDeposit) {
+    await actionDepositsAPI.addActionDeposit(actionDeposit);
+    await getActionDeposits(actionDeposit.vbUserId);
+  }
+
+  async function updateActionDeposit(actionDeposit: ActionDeposit) {
+    await actionDepositsAPI.updateActionDeposit(actionDeposit);
+    await getActionDeposits(actionDeposit.vbUserId);
+  }
+
+  async function deleteActionDeposit(actionDeposit: ActionDeposit) {
+    await actionDepositsAPI.deleteActionDeposit(actionDeposit.id);
+    await getActionDeposits(actionDeposit.vbUserId);
+  }
+
+  // #endregion
+
+  // #region Task Deposits
+
+  const taskDepositsState: Ref<TaskDeposit[]> = ref([]);
+  const taskDeposits = computed(() => [...taskDepositsState.value]);
+  const taskDepositsMap = computed(() =>
+    arrayToObject(taskDeposits.value, (t) => t.id),
+  );
+
+  async function getTaskDeposits(vbUserId: string) {
+    const result = await taskDepositsAPI.getTaskDeposits(vbUserId);
+    taskDepositsState.value = result;
+  }
+
+  async function addNewTaskDeposit(taskDeposit: TaskDeposit) {
+    await taskDepositsAPI.addTaskDeposit(taskDeposit);
+    await getTaskDeposits(taskDeposit.vbUserId);
+  }
+
+  async function updateTaskDeposit(taskDeposit: TaskDeposit) {
+    await taskDepositsAPI.updateTaskDeposit(taskDeposit);
+    await getTaskDeposits(taskDeposit.vbUserId);
+  }
+
+  async function deleteTaskDeposit(taskDeposit: TaskDeposit) {
+    await taskDepositsAPI.deleteTaskDeposit(taskDeposit.id);
+    await getTaskDeposits(taskDeposit.vbUserId);
+  }
+
+  // #endregion
+
   return {
     // Users
     vbUsers,
@@ -142,5 +206,21 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
     addNewTask,
     updateTask,
     deleteTask,
+
+    // action deposits
+    actionDeposits,
+    actionDepositsMap,
+    getActionDeposits,
+    addNewActionDeposit,
+    updateActionDeposit,
+    deleteActionDeposit,
+
+    // task deposits
+    taskDeposits,
+    taskDepositsMap,
+    getTaskDeposits,
+    addNewTaskDeposit,
+    updateTaskDeposit,
+    deleteTaskDeposit,
   };
 });

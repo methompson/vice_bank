@@ -29,12 +29,22 @@
   </VDialog>
 
   <VDialog v-model="showAddActionDialog" max-width="600px">
-    <DepositActionDialog
+    <AddActionDepositDialog
       v-if="actionToDeposit"
       :action="actionToDeposit"
       :loading="loading"
-      @close="closeAddActionDialog"
-      @saveActionDeposit="addActionDeposit"
+      @close="closeAddActionDepositDialog"
+      @saveActionDeposit="saveNewActionDeposit"
+    />
+  </VDialog>
+
+  <VDialog v-model="showAddTaskDialog" max-width="600px">
+    <AddTaskDepositDialog
+      v-if="taskToDeposit"
+      :task="taskToDeposit"
+      :loading="loading"
+      @close="closeAddTaskDepositDialog"
+      @saveTaskDeposit="saveNewTaskDeposit"
     />
   </VDialog>
 
@@ -69,15 +79,16 @@
         <VRow>
           <VCol v-for="item in itemsList" :key="item.id" cols="12" md="6">
             <ActionCard
-              v-if="item instanceof Action"
+              v-if="isAction(item)"
               :action="item"
-              @click="showAddAction(item)"
+              @click="showAddActionDepositDialog(item)"
               @deleteAction="deleteAction"
               @updateAction="showUpdateActionDialog"
             />
             <TaskCard
-              v-if="item instanceof Task"
+              v-if="isTask(item)"
               :task="item"
+              @click="showAddTaskDepositDialog(item)"
               @deleteTask="deleteTask"
               @updateTask="showUpdateTaskDialog"
             />
@@ -85,24 +96,66 @@
         </VRow>
       </template>
 
-      <VRow>
-        <VCol>
+      <VRow v-if="showDepositHistory">
+        <VCol cols="12">
           <!-- Put list of deposit hisotry here -->
           <span class="text-h5"> Deposit History </span>
         </VCol>
+
+        <VExpansionPanels multiple>
+          <VExpansionPanel
+            v-for="[date, history] in Object.entries(depositHistory)"
+            :key="date"
+          >
+            <VExpansionPanelTitle>
+              {{ makeFriendlyYear(date) }} - {{ history.length }}
+              {{ history.length === 1 ? 'deposit' : 'deposits' }}
+            </VExpansionPanelTitle>
+
+            <VExpansionPanelText>
+              <VRow>
+                <VCol
+                  v-for="dep in history"
+                  :key="dep.id"
+                  cols="12"
+                  class="pa-1"
+                >
+                  <ActionDepositCard
+                    v-if="isActionDeposit(dep)"
+                    :actionDeposit="dep"
+                    @deleteActionDeposit="deleteActionDeposit"
+                  />
+                  <TaskDepositCard
+                    v-if="isTaskDeposit(dep)"
+                    :taskDeposit="dep"
+                    @deleteTaskDeposit="deleteTaskDeposit"
+                  />
+                </VCol>
+              </VRow>
+            </VExpansionPanelText>
+          </VExpansionPanel>
+        </VExpansionPanels>
       </VRow>
     </VContainer>
   </NoUserSelected>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeMount, ref, toRefs, type Ref } from 'vue';
+import {
+  computed,
+  onBeforeMount,
+  ref,
+  toRefs,
+  watch,
+  type ComputedRef,
+  type Ref,
+} from 'vue';
+import { DateTime } from 'luxon';
 
 import { Action } from '@vice_bank/models/action';
 import { useViceBankStore } from '@/stores/vice_bank_store';
 
 import { useAppStore } from '@/stores/app_store';
-import { getUserId } from '@/utils/auth';
 import { Task } from '@vice_bank/models/task';
 
 import NoUserSelected from '@/views/components/root_components/no_user_selected.vue';
@@ -111,14 +164,25 @@ import ActionCard from '@/views/components/deposits/action_card.vue';
 import TaskCard from '@/views/components/deposits/task_card.vue';
 import EditActionDialog from '@/views/components/dialogs/edit_action_dialog.vue';
 import EditTaskDialog from '@/views/components/dialogs/edit_task_dialog.vue';
+import AddActionDepositDialog from '@/views/components/dialogs/add_action_deposit_dialog.vue';
+import ActionDepositCard from '@/views/components/deposits/action_deposit_card.vue';
+import TaskDepositCard from '@/views/components/deposits/task_deposit_card.vue';
+import AddTaskDepositDialog from '@/views/components/dialogs/add_task_deposit_dialog.vue';
 
-import DepositActionDialog from '@/views/components/dialogs/deposit_action_dialog.vue';
-import type { ActionDeposit } from '@vice_bank/models/action_deposit';
+import { ActionDeposit } from '@vice_bank/models/action_deposit';
+import { TaskDeposit } from '@vice_bank/models/task_deposit';
 
 const vbStore = useViceBankStore();
 const appStore = useAppStore();
 
-const { actions, tasks } = toRefs(vbStore);
+const { actions, tasks, actionDeposits, taskDeposits, currentUser } =
+  toRefs(vbStore);
+
+watch(currentUser, async (user) => {
+  if (user) {
+    await getAllData();
+  }
+});
 
 const loading = ref(false);
 const addEditActionTaskDialog = ref(false);
@@ -131,7 +195,7 @@ const itemsList = computed(() => {
   return list;
 });
 
-// #region Add Dialog
+// #region Add Action or Task Dialog
 
 function showAddDialog() {
   addEditActionTaskDialog.value = true;
@@ -142,8 +206,9 @@ function closeAddDialog() {
 }
 
 async function saveNewAction(action: Action) {
+  loading.value = true;
+
   try {
-    loading.value = true;
     await vbStore.addNewAction(action);
 
     closeAddDialog();
@@ -293,7 +358,7 @@ function closeEditDialog() {
 
 // #endregion
 
-// #region Add Action
+// #region Add Action Deposit
 
 const actionToDeposit: Ref<Action | undefined> = ref(undefined);
 const showAddActionDialog = computed({
@@ -303,29 +368,191 @@ const showAddActionDialog = computed({
   },
 });
 
-function showAddAction(action: Action) {
+function isAction(item: Action | Task): item is Action {
+  return item instanceof Action;
+}
+
+function showAddActionDepositDialog(action: Action) {
   actionToDeposit.value = action;
 }
-function closeAddActionDialog() {
+function closeAddActionDepositDialog() {
   showAddActionDialog.value = false;
 }
 
-function addActionDeposit(deposit: ActionDeposit) {
-  console.log('Adding deposit:', deposit);
+async function saveNewActionDeposit(deposit: ActionDeposit) {
+  loading.value = true;
+
+  try {
+    await vbStore.addNewActionDeposit(deposit);
+
+    closeAddActionDepositDialog();
+
+    appStore.setSuccessMessage({
+      message: 'Action Deposit saved successfully',
+    });
+  } catch (e) {
+    console.error('Error saving action deposit:', e);
+    appStore.setErrorMessage({
+      message: 'Error saving action deposit',
+    });
+  }
+
+  loading.value = false;
 }
 
-// #endregion
+async function getAllData() {
+  const vbUserId = currentUser.value?.id;
 
-async function beforeMountHandler() {
+  if (!vbUserId) {
+    return;
+  }
+
+  loading.value = true;
   try {
-    const userId = getUserId();
-    await Promise.all([vbStore.getActions(userId), vbStore.getTasks(userId)]);
+    await Promise.all([
+      vbStore.getActions(vbUserId),
+      vbStore.getTasks(vbUserId),
+      vbStore.getActionDeposits(vbUserId),
+      vbStore.getTaskDeposits(vbUserId),
+    ]);
   } catch (e) {
     console.error('Error fetching actions:', e);
     appStore.setErrorMessage({
       message: 'Error fetching actions',
     });
   }
+
+  loading.value = false;
+}
+
+// #endregion
+
+// #region Add Task Deposit
+const taskToDeposit: Ref<Task | undefined> = ref(undefined);
+const showAddTaskDialog = computed({
+  get: () => !!taskToDeposit.value,
+  set: (_value) => {
+    taskToDeposit.value = undefined;
+  },
+});
+
+function isTask(item: Action | Task): item is Task {
+  return item instanceof Task;
+}
+
+function showAddTaskDepositDialog(task: Task) {
+  taskToDeposit.value = task;
+}
+function closeAddTaskDepositDialog() {
+  showAddTaskDialog.value = false;
+}
+
+async function saveNewTaskDeposit(deposit: TaskDeposit) {
+  loading.value = true;
+
+  try {
+    await vbStore.addNewTaskDeposit(deposit);
+
+    closeAddTaskDepositDialog();
+
+    appStore.setSuccessMessage({
+      message: 'Task Deposit saved successfully',
+    });
+  } catch (e) {
+    console.error('Error saving task deposit:', e);
+    appStore.setErrorMessage({
+      message: 'Error saving task deposit',
+    });
+  }
+
+  loading.value = false;
+}
+// #endregion
+
+// #region Deposit History
+
+const showDepositHistory = computed(() => {
+  return [...actionDeposits.value, ...taskDeposits.value].length > 0;
+});
+
+const depositHistory: ComputedRef<
+  Record<string, (ActionDeposit | TaskDeposit)[]>
+> = computed(() => {
+  const depositsList = [...actionDeposits.value, ...taskDeposits.value];
+
+  depositsList.sort((a, b) => {
+    return b.date.toMillis() - a.date.toMillis();
+  });
+
+  const dateMap: Record<string, (ActionDeposit | TaskDeposit)[]> = {};
+  depositsList.forEach((dep) => {
+    const date = dep.date.toISODate();
+    const deposits = dateMap[date] ?? [];
+    deposits.push(dep);
+    dateMap[date] = deposits;
+  });
+
+  return dateMap;
+});
+
+function makeFriendlyYear(year: string) {
+  const dt = DateTime.fromISO(year);
+
+  return dt.toLocaleString(DateTime.DATE_MED);
+}
+
+async function deleteActionDeposit(actionDeposit: ActionDeposit) {
+  loading.value = true;
+
+  try {
+    await vbStore.deleteActionDeposit(actionDeposit);
+    appStore.setSuccessMessage({
+      message: 'Action Deposit deleted successfully',
+    });
+  } catch (e) {
+    console.error('Error deleting action deposit:', e);
+    appStore.setErrorMessage({
+      message: 'Error deleting action deposit',
+    });
+  }
+
+  loading.value = false;
+}
+
+async function deleteTaskDeposit(taskDeposit: TaskDeposit) {
+  loading.value = true;
+
+  try {
+    await vbStore.deleteTaskDeposit(taskDeposit);
+    appStore.setSuccessMessage({
+      message: 'Task Deposit deleted successfully',
+    });
+  } catch (e) {
+    console.error('Error deleting task deposit:', e);
+    appStore.setErrorMessage({
+      message: 'Error deleting task deposit',
+    });
+  }
+
+  loading.value = false;
+}
+
+// #endregion
+
+async function beforeMountHandler() {
+  await getAllData();
+}
+
+function isActionDeposit(
+  input: ActionDeposit | TaskDeposit,
+): input is ActionDeposit {
+  return input instanceof ActionDeposit;
+}
+
+function isTaskDeposit(
+  input: ActionDeposit | TaskDeposit,
+): input is TaskDeposit {
+  return input instanceof TaskDeposit;
 }
 
 onBeforeMount(beforeMountHandler);

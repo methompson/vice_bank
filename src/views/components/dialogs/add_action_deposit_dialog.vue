@@ -46,11 +46,11 @@ const props = withDefaults(
     loading: false,
   },
 );
-
 const { action, loading } = toRefs(props);
+
 const emit = defineEmits<{
   (e: 'close'): void;
-  (e: 'saveActionDeposit', action: ActionDeposit): void;
+  (e: 'saveActionDeposit', deposit: ActionDeposit): void;
 }>();
 
 const quantity = ref(0);

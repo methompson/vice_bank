@@ -114,7 +114,7 @@ export async function updateTaskDeposit(
 }
 
 export async function deleteTaskDeposit(
-  depositId: string,
+  taskDepositId: string,
 ): Promise<TaskDeposit> {
   const url = `${getBaseUrl()}/vice_bank/deleteTaskDeposit`;
 
@@ -123,7 +123,7 @@ export async function deleteTaskDeposit(
   headers.append('authorization', await getAuthToken());
 
   const body = JSON.stringify({
-    depositId,
+    taskDepositId,
   });
 
   const response = await fetch(url, {
