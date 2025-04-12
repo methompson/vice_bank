@@ -43,6 +43,7 @@
       v-if="taskToDeposit"
       :task="taskToDeposit"
       :loading="loading"
+      :taskDepositHistory="taskDeposits"
       @close="closeAddTaskDepositDialog"
       @saveTaskDeposit="saveNewTaskDeposit"
     />

@@ -47,6 +47,15 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
     vbUsersState.value = await usersAPI.getVBUsers();
   }
 
+  async function getCurrentUser(vbUserId: string) {
+    const user = await usersAPI.getVBUserById(vbUserId);
+
+    vbUsersState.value = Object.values({
+      ...userMap.value,
+      [user.id]: user,
+    });
+  }
+
   type AddUserPayload = {
     name: string;
     currentTokens: number;
@@ -135,17 +144,26 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
 
   async function addNewActionDeposit(actionDeposit: ActionDeposit) {
     await actionDepositsAPI.addActionDeposit(actionDeposit);
-    await getActionDeposits(actionDeposit.vbUserId);
+    await Promise.all([
+      getActionDeposits(actionDeposit.vbUserId),
+      getCurrentUser(actionDeposit.vbUserId),
+    ]);
   }
 
   async function updateActionDeposit(actionDeposit: ActionDeposit) {
     await actionDepositsAPI.updateActionDeposit(actionDeposit);
-    await getActionDeposits(actionDeposit.vbUserId);
+    await Promise.all([
+      getActionDeposits(actionDeposit.vbUserId),
+      getCurrentUser(actionDeposit.vbUserId),
+    ]);
   }
 
   async function deleteActionDeposit(actionDeposit: ActionDeposit) {
     await actionDepositsAPI.deleteActionDeposit(actionDeposit.id);
-    await getActionDeposits(actionDeposit.vbUserId);
+    await Promise.all([
+      getActionDeposits(actionDeposit.vbUserId),
+      getCurrentUser(actionDeposit.vbUserId),
+    ]);
   }
 
   // #endregion
@@ -165,17 +183,26 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
 
   async function addNewTaskDeposit(taskDeposit: TaskDeposit) {
     await taskDepositsAPI.addTaskDeposit(taskDeposit);
-    await getTaskDeposits(taskDeposit.vbUserId);
+    await Promise.all([
+      getTaskDeposits(taskDeposit.vbUserId),
+      getCurrentUser(taskDeposit.vbUserId),
+    ]);
   }
 
   async function updateTaskDeposit(taskDeposit: TaskDeposit) {
     await taskDepositsAPI.updateTaskDeposit(taskDeposit);
-    await getTaskDeposits(taskDeposit.vbUserId);
+    await Promise.all([
+      getTaskDeposits(taskDeposit.vbUserId),
+      getCurrentUser(taskDeposit.vbUserId),
+    ]);
   }
 
   async function deleteTaskDeposit(taskDeposit: TaskDeposit) {
     await taskDepositsAPI.deleteTaskDeposit(taskDeposit.id);
-    await getTaskDeposits(taskDeposit.vbUserId);
+    await Promise.all([
+      getTaskDeposits(taskDeposit.vbUserId),
+      getCurrentUser(taskDeposit.vbUserId),
+    ]);
   }
 
   // #endregion

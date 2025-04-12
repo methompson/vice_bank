@@ -4,7 +4,7 @@ import {
   ViceBankUser,
   type ViceBankUserJSON,
 } from '@vice_bank/models/vice_bank_user';
-import { getAuthToken, getBaseUrl } from '../utils/auth';
+import { getAuthToken, getBaseUrl } from '@/utils/auth';
 
 interface GetVBUsersResponse {
   users: ViceBankUserJSON[];
@@ -38,6 +38,32 @@ export async function getVBUsers(): Promise<ViceBankUser[]> {
   console.log('data', dat);
 
   return dat.users.map((user) => new ViceBankUser(user));
+}
+
+export async function getVBUserById(vbUserId: string) {
+  const url = `${getBaseUrl()}/vice_bank/user?vbUserId=${vbUserId}`;
+
+  const headers = new Headers();
+  headers.append('authorization', await getAuthToken());
+
+  const response = await fetch(url, {
+    headers,
+  });
+
+  const dat = await response.json();
+
+  if (!response.ok) {
+    console.error('Error fetching user:', dat);
+    throw new Error(`Error fetching user`);
+  }
+
+  const vbUser = dat.user;
+
+  if (!ViceBankUser.isViceBankUserJSON(vbUser)) {
+    throw new Error('Invalid response from server');
+  }
+
+  return new ViceBankUser(vbUser);
 }
 
 interface AddVBUserPayload {

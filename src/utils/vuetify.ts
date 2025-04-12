@@ -1,3 +1,4 @@
+import LuxonAdapter from '@date-io/luxon';
 import '@mdi/font/css/materialdesignicons.css';
 
 import 'vuetify/lib/styles/main.sass';
@@ -37,6 +38,9 @@ export function getVuetify() {
     directives,
     icons: {
       defaultSet: 'mdi',
+    },
+    date: {
+      adapter: LuxonAdapter,
     },
   });
 

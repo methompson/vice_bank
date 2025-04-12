@@ -9,8 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@date-io/luxon": "^3.2.0",
     "@mdi/font": "^7.4.47",
     "firebase": "^11.5.0",
+    "luxon": "^3.6.1",
     "pinia": "^3.0.1",
     "tcheck": "^1.2.5",
     "uuid": "^11.1.0",
@@ -22,6 +24,7 @@
   "devDependencies": {
     "@tsconfig/node22": "^22.0.1",
     "@types/jsdom": "^21.1.7",
+    "@types/luxon": "^3.6.2",
     "@types/node": "^22.13.14",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-vue": "^5.2.3",
