@@ -52,7 +52,6 @@ async function addUser() {
   try {
     await usersAPI.addVBUser({
       name: 'test',
-      currentTokens: 0,
     });
   } catch (e) {
     console.error(e);
@@ -66,7 +65,6 @@ async function updateUser() {
         id: '2e8ac8db-6c3e-4c04-a631-210f5c7a3ada',
         userId: 'r3NVUF0c2iTEmOe42WVIGX2WkPK2',
         name: 'test_update',
-        currentTokens: 20,
       }),
     );
   } catch (e) {

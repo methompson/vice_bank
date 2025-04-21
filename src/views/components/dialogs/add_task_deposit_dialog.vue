@@ -1,5 +1,5 @@
 <template>
-  <CommonDialog :loading="loading" @close="close" title="Deposit Action">
+  <CommonDialog :loading="loading" @close="close" title="Deposit Task">
     <VContainer class="px-0">
       <VRow justify="center" align="center">
         <VCol cols="12">
@@ -7,24 +7,7 @@
         </VCol>
 
         <VCol cols="12" class="text-center">
-          <VMenu>
-            <template v-slot:activator="{ props }">
-              <VTextField
-                v-model="addOnDateStr"
-                v-bind="props"
-                label="Date"
-                variant="outlined"
-                density="compact"
-              />
-            </template>
-
-            <VDatePicker
-              v-model="addOnDate"
-              label="Deposit Date"
-              color="primary"
-              class="mb-4"
-            />
-          </VMenu>
+          <TextDatePicker v-model="addOnDate" />
         </VCol>
 
         <VCol cols="12" class="text-center">
@@ -42,16 +25,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs, watch, type Ref } from 'vue';
+import { computed, ref, toRefs, type Ref } from 'vue';
+import { DateTime } from 'luxon';
+import { isString } from 'tcheck';
 
 import type { Task } from '@vice_bank/models/task';
 import { TaskDeposit } from '@vice_bank/models/task_deposit';
+import { arrayToObject } from '@/utils/array_to_obj';
 
 import TaskCard from '@/views/components/deposits/task_card.vue';
 import CommonDialog from '@/views/components/common_dialog.vue';
-import { DateTime } from 'luxon';
-import { arrayToObject } from '@/utils/array_to_obj';
-import { isString } from 'tcheck';
+import TextDatePicker from '@/views/components/text_date_picker.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -71,13 +55,6 @@ const emit = defineEmits<{
 }>();
 
 const addOnDate: Ref<DateTime<true>> = ref(DateTime.now().startOf('day'));
-const addOnDatePretty = computed(() => {
-  return addOnDate.value.toLocaleString(DateTime.DATE_SHORT);
-});
-const addOnDateStr = ref<string>(addOnDatePretty.value);
-watch(addOnDate, (value) => {
-  addOnDateStr.value = addOnDatePretty.value;
-});
 
 const depositHistoryForTask = computed(() => {
   return props.taskDepositHistory.filter((d) => d.task.id === task.value.id);

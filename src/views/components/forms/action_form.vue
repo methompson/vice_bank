@@ -36,6 +36,7 @@
         <VNumberInput
           v-model="tokensEarnedPerInput"
           :min="0"
+          :precision="2"
           density="compact"
           variant="outlined"
           label="How many tokens you get"

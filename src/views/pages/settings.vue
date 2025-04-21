@@ -48,7 +48,7 @@
 
     <VRow>
       <VCol>
-        <VBtn color="primary" class="w-100">Logout</VBtn>
+        <VBtn @click="logout" color="primary" class="w-100">Logout</VBtn>
       </VCol>
     </VRow>
 
@@ -59,8 +59,12 @@
 </template>
 
 <script setup lang="ts">
-import UserSelect from '@/views/components/user_select.vue';
 import { ref } from 'vue';
+
+import UserSelect from '@/views/components/user_select.vue';
+import { useAppStore } from '@/stores/app_store';
+
+const appStore = useAppStore();
 
 const userSelect = ref(false);
 
@@ -70,5 +74,15 @@ function showUserSelect() {
 
 function closeUserSelect() {
   userSelect.value = false;
+}
+
+async function logout() {
+  try {
+    await appStore.logout();
+  } catch (e) {
+    appStore.setErrorMessage({
+      message: 'Logout failed',
+    });
+  }
 }
 </script>

@@ -1,16 +1,11 @@
 <template>
-  <VCard color="red">
+  <VCard color="orange">
     <VCardText class="pa-2">
       <VRow align="center">
         <VCol class="actionCardTitle">
-          <span class="title">
-            {{ task.name }}
-          </span>
+          <span class="title"> {{ reward.name }} {{ tokenPhrase }} </span>
 
-          <span class="subtitle">
-            Once a {{ task.frequency }} for
-            {{ task.tokensEarnedPerInput }} Token(s)
-          </span>
+          <span class="subtitle"> Cost {{ reward.price }} </span>
         </VCol>
 
         <VCol v-if="showMenu" class="text-end">
@@ -25,11 +20,11 @@
             </template>
 
             <VList>
-              <VListItem value="edit" item="edit" @click="updateTask()">
+              <VListItem value="edit" item="edit" @click="editReward()">
                 <VListItemTitle>Edit</VListItemTitle>
               </VListItem>
 
-              <VListItem value="delete" item="delete" @click="deleteTask()">
+              <VListItem value="delete" item="delete" @click="deleteReward()">
                 <VListItemTitle> Delete </VListItemTitle>
               </VListItem>
             </VList>
@@ -41,13 +36,12 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs } from 'vue';
-
-import type { Task } from '@vice_bank/models/task';
+import type { Reward } from '@vice_bank/models/reward';
+import { computed, toRefs } from 'vue';
 
 const props = withDefaults(
   defineProps<{
-    task: Task;
+    reward: Reward;
     showMenu?: boolean;
   }>(),
   {
@@ -55,17 +49,21 @@ const props = withDefaults(
   },
 );
 
-const { task } = toRefs(props);
+const { reward, showMenu } = toRefs(props);
 
 const emit = defineEmits<{
-  (e: 'updateTask', task: Task): void;
-  (e: 'deleteTask', task: Task): void;
+  (e: 'updateReward', reward: Reward): void;
+  (e: 'deleteReward', reward: Reward): void;
 }>();
 
-function deleteTask() {
-  emit('deleteTask', task.value);
+const tokenPhrase = computed(() => {
+  return reward.value.price === 1 ? 'Token' : 'Tokens';
+});
+
+function editReward() {
+  emit('updateReward', reward.value);
 }
-function updateTask() {
-  emit('updateTask', task.value);
+function deleteReward() {
+  emit('deleteReward', reward.value);
 }
 </script>

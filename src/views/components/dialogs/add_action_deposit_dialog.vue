@@ -8,6 +8,10 @@
 
         <VCol cols="12"> {{ tokensEarned }} Tokens Earned </VCol>
 
+        <VCol cols="12" class="text-center">
+          <TextDatePicker v-model="addOnDate" />
+        </VCol>
+
         <VCol cols="12">
           <VNumberInput
             v-model="quantity"
@@ -29,13 +33,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs } from 'vue';
+import { computed, ref, toRefs, type Ref } from 'vue';
+import { DateTime } from 'luxon';
 
 import type { Action } from '@vice_bank/models/action';
 import { ActionDeposit } from '@vice_bank/models/action_deposit';
 
 import CommonDialog from '@/views/components/common_dialog.vue';
 import ActionCard from '@/views/components/deposits/action_card.vue';
+import TextDatePicker from '@/views/components/text_date_picker.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -53,6 +59,8 @@ const emit = defineEmits<{
   (e: 'saveActionDeposit', deposit: ActionDeposit): void;
 }>();
 
+const addOnDate: Ref<DateTime<true>> = ref(DateTime.now().startOf('day'));
+
 const quantity = ref(0);
 
 const canDeposit = computed(() => {
@@ -61,7 +69,9 @@ const canDeposit = computed(() => {
 });
 
 const deposit = computed(() => {
-  return ActionDeposit.fromAction(action.value, quantity.value);
+  return ActionDeposit.fromAction(action.value, quantity.value, {
+    date: addOnDate.value,
+  });
 });
 
 const tokensEarned = computed(() => {

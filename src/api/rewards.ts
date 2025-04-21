@@ -1,6 +1,7 @@
-import { Reward, type RewardJSON } from '@vice_bank/models/reward';
-import { getAuthToken, getBaseUrl } from '../utils/auth';
 import { isArrayOfGenerator } from 'tcheck';
+
+import { Reward, type RewardJSON } from '@vice_bank/models/reward';
+import { getAuthToken, getBaseUrl } from '@/utils/auth';
 
 const isRewardsJSONArray = isArrayOfGenerator<RewardJSON>(Reward.isRewardJSON);
 
@@ -20,11 +21,15 @@ export async function getRewards(vbUserId: string): Promise<Reward[]> {
     console.error('Error getting users:', dat);
     throw new Error(`Error getting users`);
   }
-  if (!isRewardsJSONArray(dat)) {
-    throw new Error('Invalid response from server');
+
+  const rewards = dat.rewards;
+
+  if (!isRewardsJSONArray(rewards)) {
+    const test = Reward.rewardJSONTest(dat);
+    throw new Error(`Invalid response from server: ${test.join(', ')}`);
   }
 
-  return dat.map((r) => new Reward(r));
+  return rewards.map((r) => new Reward(r));
 }
 
 export async function addReward(reward: Reward): Promise<Reward> {
@@ -35,7 +40,7 @@ export async function addReward(reward: Reward): Promise<Reward> {
   headers.append('authorization', await getAuthToken());
 
   const body = JSON.stringify({
-    rewardToAdd: {
+    reward: {
       vbUserId: reward.vbUserId,
       name: reward.name,
       price: reward.price,

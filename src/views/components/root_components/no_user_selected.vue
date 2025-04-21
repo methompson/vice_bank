@@ -6,6 +6,7 @@
         <div>Select a User</div>
       </VCol>
     </VRow>
+
     <UserSelect />
   </template>
 

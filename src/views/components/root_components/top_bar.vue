@@ -3,7 +3,7 @@
     <VAppBarTitle>
       <div class="text-h5">{{ currentUser.name }}</div>
       <div class="text-subtitle-2">
-        {{ currentUser.currentTokens }} {{ tokensName }}
+        {{ currentUserTokens }} {{ tokensName }}
       </div>
     </VAppBarTitle>
   </VAppBar>
@@ -16,10 +16,10 @@ import { useViceBankStore } from '@/stores/vice_bank_store';
 import { computed } from 'vue';
 
 const vbStore = useViceBankStore();
-const { currentUser } = storeToRefs(vbStore);
+const { currentUser, currentUserTokens } = storeToRefs(vbStore);
 
 const tokensName = computed(() => {
-  const tokens = currentUser.value?.currentTokens;
+  const tokens = currentUserTokens.value;
 
   if (!tokens || tokens > 1 || tokens < 1) {
     return 'Tokens';

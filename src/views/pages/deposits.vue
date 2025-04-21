@@ -1,5 +1,5 @@
 <template>
-  <VDialog v-model="addEditActionTaskDialog" max-width="600px">
+  <VDialog v-model="addActionTaskDialog" max-width="600px">
     <AddActionTaskDialog
       :loading="loading"
       @close="closeAddDialog"
@@ -51,10 +51,9 @@
 
   <NoUserSelected>
     <VContainer>
-      <VRow v-if="itemsList.length === 0">
+      <VRow v-if="itemsList.length === 0" align="center">
         <VCol cols="12">
-          <!-- Put list of tasks or actions here -->
-          <span class="text-h5"> No Tasks or Actions </span>
+          <span class="text-h5">Actions and Tasks</span>
         </VCol>
 
         <VCol cols="12">
@@ -64,38 +63,36 @@
         </VCol>
       </VRow>
 
-      <template v-else>
-        <VRow align="center">
-          <VCol cols="auto">
-            <span class="text-h5">Actions and Tasks</span>
-          </VCol>
+      <VRow v-else align="center">
+        <VCol cols="auto">
+          <span class="text-h5">Actions and Tasks</span>
+        </VCol>
 
-          <VSpacer />
+        <VSpacer />
 
-          <VCol class="text-end">
-            <VBtn @click="showAddDialog" color="primary" icon="mdi-plus" />
-          </VCol>
-        </VRow>
+        <VCol class="text-end">
+          <VBtn @click="showAddDialog" color="primary" icon="mdi-plus" />
+        </VCol>
+      </VRow>
 
-        <VRow>
-          <VCol v-for="item in itemsList" :key="item.id" cols="12" md="6">
-            <ActionCard
-              v-if="isAction(item)"
-              :action="item"
-              @click="showAddActionDepositDialog(item)"
-              @deleteAction="deleteAction"
-              @updateAction="showUpdateActionDialog"
-            />
-            <TaskCard
-              v-if="isTask(item)"
-              :task="item"
-              @click="showAddTaskDepositDialog(item)"
-              @deleteTask="deleteTask"
-              @updateTask="showUpdateTaskDialog"
-            />
-          </VCol>
-        </VRow>
-      </template>
+      <VRow v-if="itemsList.length > 0">
+        <VCol v-for="item in itemsList" :key="item.id" cols="12" md="6">
+          <ActionCard
+            v-if="isAction(item)"
+            :action="item"
+            @click="showAddActionDepositDialog(item)"
+            @deleteAction="deleteAction"
+            @updateAction="showUpdateActionDialog"
+          />
+          <TaskCard
+            v-if="isTask(item)"
+            :task="item"
+            @click="showAddTaskDepositDialog(item)"
+            @deleteTask="deleteTask"
+            @updateTask="showUpdateTaskDialog"
+          />
+        </VCol>
+      </VRow>
 
       <VRow v-if="showDepositHistory">
         <VCol cols="12">
@@ -151,13 +148,13 @@ import {
   type ComputedRef,
   type Ref,
 } from 'vue';
-import { DateTime } from 'luxon';
 
 import { Action } from '@vice_bank/models/action';
 import { useViceBankStore } from '@/stores/vice_bank_store';
 
 import { useAppStore } from '@/stores/app_store';
 import { Task } from '@vice_bank/models/task';
+import { useHistoryComposable } from '@/views/pages/history_composable';
 
 import NoUserSelected from '@/views/components/root_components/no_user_selected.vue';
 import AddActionTaskDialog from '@/views/components/dialogs/add_action_task_dialog.vue';
@@ -186,7 +183,6 @@ watch(currentUser, async (user) => {
 });
 
 const loading = ref(false);
-const addEditActionTaskDialog = ref(false);
 
 const itemsList = computed(() => {
   const list = [...actions.value, ...tasks.value];
@@ -196,14 +192,43 @@ const itemsList = computed(() => {
   return list;
 });
 
+async function getAllData() {
+  const vbUserId = currentUser.value?.id;
+
+  if (!vbUserId) {
+    return;
+  }
+
+  loading.value = true;
+  try {
+    await Promise.all([
+      vbStore.getActions(vbUserId),
+      vbStore.getTasks(vbUserId),
+      vbStore.getActionDeposits(vbUserId),
+      vbStore.getTaskDeposits(vbUserId),
+    ]);
+  } catch (e) {
+    console.error('Error fetching actions:', e);
+    appStore.setErrorMessage({
+      message: 'Error fetching actions',
+    });
+  }
+
+  loading.value = false;
+}
+
+const { makeFriendlyYear } = useHistoryComposable();
+
 // #region Add Action or Task Dialog
 
+const addActionTaskDialog = ref(false);
+
 function showAddDialog() {
-  addEditActionTaskDialog.value = true;
+  addActionTaskDialog.value = true;
 }
 
 function closeAddDialog() {
-  addEditActionTaskDialog.value = false;
+  addActionTaskDialog.value = false;
 }
 
 async function saveNewAction(action: Action) {
@@ -401,31 +426,6 @@ async function saveNewActionDeposit(deposit: ActionDeposit) {
   loading.value = false;
 }
 
-async function getAllData() {
-  const vbUserId = currentUser.value?.id;
-
-  if (!vbUserId) {
-    return;
-  }
-
-  loading.value = true;
-  try {
-    await Promise.all([
-      vbStore.getActions(vbUserId),
-      vbStore.getTasks(vbUserId),
-      vbStore.getActionDeposits(vbUserId),
-      vbStore.getTaskDeposits(vbUserId),
-    ]);
-  } catch (e) {
-    console.error('Error fetching actions:', e);
-    appStore.setErrorMessage({
-      message: 'Error fetching actions',
-    });
-  }
-
-  loading.value = false;
-}
-
 // #endregion
 
 // #region Add Task Deposit
@@ -495,12 +495,6 @@ const depositHistory: ComputedRef<
 
   return dateMap;
 });
-
-function makeFriendlyYear(year: string) {
-  const dt = DateTime.fromISO(year);
-
-  return dt.toLocaleString(DateTime.DATE_MED);
-}
 
 async function deleteActionDeposit(actionDeposit: ActionDeposit) {
   loading.value = true;
