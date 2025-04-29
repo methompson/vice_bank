@@ -17,21 +17,35 @@
     />
   </VDialog>
 
+  <VDialog v-model="showEditReward" max-width="600px">
+    <AddRewardDialog
+      v-if="rewardToEdit"
+      @close="closeEditRewardDialog"
+      @saveReward="updateReward"
+      :loading="loading"
+      :reward="rewardToEdit"
+    />
+  </VDialog>
+
   <NoUserSelected>
     <VContainer>
-      <VRow v-if="rewards.length === 0">
+      <VRow v-if="rewards.length === 0" align="center">
         <VCol cols="12">
           <span class="text-h5">Rewards</span>
         </VCol>
 
-        <VCol cols="12">
-          <VBtn @click="showAddRewardDialog" color="primary" class="w-100">
+        <VCol cols="12" class="w-100 text-center">
+          <VBtn
+            @click="showAddRewardDialog"
+            color="primary"
+            class="text-center"
+          >
             Add a Reward
           </VBtn>
         </VCol>
       </VRow>
 
-      <VRow v-else>
+      <VRow v-else align="center">
         <VCol cols="auto">
           <span class="text-h5">Rewards</span>
         </VCol>
@@ -48,14 +62,14 @@
           <RewardCard
             :reward="reward"
             @click="showAddWithdrawalDialog(reward)"
-            @updateReward="vbStore.updateReward"
-            @deleteReward="vbStore.deleteReward"
+            @updateReward="showEditRewardDialog(reward)"
+            @deleteReward="deleteReward"
           />
         </VCol>
       </VRow>
 
       <VRow>
-        <VCol cols="12">
+        <VCol v-if="showPurchaseHistory" cols="12">
           <!-- Put list of purchase hisotry here -->
           <span class="text-h5">Purchase History</span>
         </VCol>
@@ -67,7 +81,7 @@
           >
             <VExpansionPanelTitle>
               {{ makeFriendlyYear(date) }} - {{ history.length }}
-              {{ history.length === 1 ? 'purchase' : 'purchases' }}
+              {{ history.length === 1 ? 'Purchase' : 'Purchases' }}
             </VExpansionPanelTitle>
 
             <VExpansionPanelText>
@@ -93,11 +107,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs, watch, type ComputedRef, type Ref } from 'vue';
+import {
+  computed,
+  onBeforeMount,
+  ref,
+  toRefs,
+  watch,
+  type ComputedRef,
+  type Ref,
+} from 'vue';
 
 import { useViceBankStore } from '@/stores/vice_bank_store';
 import { useAppStore } from '@/stores/app_store';
-import type { Reward } from '@vice_bank/models/reward';
+import { Reward } from '@vice_bank/models/reward';
 import type { Purchase } from '@vice_bank/models/purchase';
 import { useHistoryComposable } from '@/views/pages/history_composable';
 
@@ -111,6 +133,12 @@ const vbStore = useViceBankStore();
 const appStore = useAppStore();
 
 const { currentUser, rewards, purchases } = toRefs(vbStore);
+
+watch(currentUser, async (user) => {
+  if (user) {
+    await getAllData();
+  }
+});
 
 const loading = ref(false);
 
@@ -190,6 +218,64 @@ async function saveNewPurchase(purchase: Purchase) {
 
 // #endregion
 
+// #region Delete / Update Reward
+
+const showEditReward = computed({
+  get() {
+    return !!rewardToEdit.value;
+  },
+  set(_val) {
+    rewardToEdit.value = undefined;
+  },
+});
+const rewardToEdit: Ref<Reward | undefined> = ref(undefined);
+
+async function updateReward(reward: Reward) {
+  loading.value = true;
+  try {
+    await vbStore.updateReward(reward);
+    appStore.setSuccessMessage({
+      message: 'Reward updated successfully',
+    });
+    showEditReward.value = false;
+  } catch (e) {
+    console.error(e);
+    appStore.setErrorMessage({
+      message: 'Error updating reward',
+    });
+  } finally {
+    loading.value = false;
+  }
+}
+
+function showEditRewardDialog(reward: Reward) {
+  rewardToEdit.value = reward;
+}
+
+function closeEditRewardDialog() {
+  rewardToEdit.value = undefined;
+}
+
+async function deleteReward(reward: Reward) {
+  loading.value = true;
+
+  try {
+    await vbStore.deleteReward(reward);
+    appStore.setSuccessMessage({
+      message: 'Reward deleted successfully',
+    });
+  } catch (e) {
+    console.error(e);
+    appStore.setErrorMessage({
+      message: 'Error deleting reward',
+    });
+  }
+
+  loading.value = false;
+}
+
+// #endregion
+
 // #region Purchase History
 
 const purchaseHistory: ComputedRef<Record<string, Purchase[]>> = computed(
@@ -209,6 +295,10 @@ const purchaseHistory: ComputedRef<Record<string, Purchase[]>> = computed(
     return pMap;
   },
 );
+
+const showPurchaseHistory = computed(() => {
+  return purchases.value.length > 0;
+});
 
 async function deletePurchase(purchase: Purchase) {
   loading.value = true;
@@ -250,9 +340,9 @@ async function getAllData() {
   }
 }
 
-watch(currentUser, async (user) => {
-  if (user) {
-    await getAllData();
-  }
-});
+async function beforeMountHandler() {
+  await getAllData();
+}
+
+onBeforeMount(beforeMountHandler);
 </script>

@@ -16,4 +16,6 @@ function bootstrap() {
   app.mount('#app');
 }
 
+console.log('2025-04-28 running');
+
 bootstrap();

@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs } from 'vue';
+import { computed, onBeforeMount, ref, toRefs } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Reward, type RewardJSON } from '@vice_bank/models/reward';
@@ -44,13 +44,14 @@ import { useAppStore } from '@/stores/app_store';
 const props = withDefaults(
   defineProps<{
     loading?: boolean;
+    reward?: Reward;
   }>(),
   {
     loading: false,
   },
 );
 
-const { loading } = toRefs(props);
+const { loading, reward } = toRefs(props);
 
 const emit = defineEmits<{
   (e: 'close'): void;
@@ -68,9 +69,10 @@ const canDeposit = computed(() => {
 });
 
 function saveReward() {
-  const vbUser = vbStore.currentUser?.id;
+  const id = props.reward?.id ?? uuidv4();
+  const vbUserId = props.reward?.vbUserId ?? vbStore.currentUser?.id;
 
-  if (!vbUser) {
+  if (!vbUserId) {
     console.error('No user ID found');
     appStore.setErrorMessage({
       message: 'Invalid VB User',
@@ -79,10 +81,10 @@ function saveReward() {
   }
 
   const newReward: RewardJSON = {
-    id: uuidv4(),
+    id,
     name: name.value,
     price: price.value,
-    vbUserId: vbUser,
+    vbUserId,
   };
 
   emit('saveReward', new Reward(newReward));
@@ -90,5 +92,14 @@ function saveReward() {
 
 function close() {
   emit('close');
+}
+
+onBeforeMount(beforeMountHandler);
+
+function beforeMountHandler() {
+  if (props.reward) {
+    name.value = props.reward.name;
+    price.value = props.reward.price;
+  }
 }
 </script>

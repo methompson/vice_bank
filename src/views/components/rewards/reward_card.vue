@@ -3,9 +3,11 @@
     <VCardText class="pa-2">
       <VRow align="center">
         <VCol class="actionCardTitle">
-          <span class="title"> {{ reward.name }} {{ tokenPhrase }} </span>
+          <span class="title"> {{ reward.name }} </span>
 
-          <span class="subtitle"> Cost {{ reward.price }} </span>
+          <span class="subtitle">
+            Cost {{ reward.price }} {{ tokenPhrase }}
+          </span>
         </VCol>
 
         <VCol v-if="showMenu" class="text-end">

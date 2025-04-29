@@ -56,7 +56,7 @@
           <span class="text-h5">Actions and Tasks</span>
         </VCol>
 
-        <VCol cols="12">
+        <VCol cols="12" class="w-100 text-center">
           <VBtn @click="showAddDialog" color="primary">
             Add an Action or Task
           </VBtn>
@@ -534,10 +534,6 @@ async function deleteTaskDeposit(taskDeposit: TaskDeposit) {
 
 // #endregion
 
-async function beforeMountHandler() {
-  await getAllData();
-}
-
 function isActionDeposit(
   input: ActionDeposit | TaskDeposit,
 ): input is ActionDeposit {
@@ -548,6 +544,10 @@ function isTaskDeposit(
   input: ActionDeposit | TaskDeposit,
 ): input is TaskDeposit {
   return input instanceof TaskDeposit;
+}
+
+async function beforeMountHandler() {
+  await getAllData();
 }
 
 onBeforeMount(beforeMountHandler);

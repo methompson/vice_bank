@@ -1,4 +1,4 @@
-appName=vice_bank
+appName=vice_bank_app
 registryUrl=con.kakomu.com
 
 compileApp() {
