@@ -61,10 +61,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import UserSelect from '@/views/components/user_select.vue';
-import { useAppStore } from '@/stores/app_store';
+import { useAuthComposable } from '@/views/pages/auth_composable';
 
-const appStore = useAppStore();
+const { logout } = useAuthComposable();
 
 const userSelect = ref(false);
 
@@ -74,15 +73,5 @@ function showUserSelect() {
 
 function closeUserSelect() {
   userSelect.value = false;
-}
-
-async function logout() {
-  try {
-    await appStore.logout();
-  } catch (e) {
-    appStore.setErrorMessage({
-      message: 'Logout failed',
-    });
-  }
 }
 </script>

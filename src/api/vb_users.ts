@@ -1,4 +1,4 @@
-import { isArrayOfGenerator, isNumber, typeGuardGenerator } from 'tcheck';
+import { isNumber, typeGuardGenerator } from 'tcheck';
 
 import {
   ViceBankUser,
@@ -6,54 +6,20 @@ import {
 } from '@vice_bank/models/vice_bank_user';
 import { getAuthToken, getBaseUrl } from '@/utils/auth';
 import type { VBUserTokens } from '@/utils/vb_user_types';
+import { NotFoundError } from '@/utils/errors';
 
-interface GetVBUsersResponse {
-  users: {
-    user: ViceBankUserJSON;
-    currentTokens: number;
-  }[];
+interface GetVBUserResponse {
+  user: ViceBankUserJSON;
+  currentTokens: number;
 }
 
-const isGetVBUsersResponse = typeGuardGenerator<GetVBUsersResponse>({
-  users: isArrayOfGenerator(
-    typeGuardGenerator({
-      user: ViceBankUser.isViceBankUserJSON,
-      currentTokens: isNumber,
-    }),
-  ),
+const isGetVBUserResponse = typeGuardGenerator<GetVBUserResponse>({
+  user: ViceBankUser.isViceBankUserJSON,
+  currentTokens: isNumber,
 });
 
-export async function getVBUsers(): Promise<VBUserTokens[]> {
-  const url = `${getBaseUrl()}/vice_bank/users`;
-
-  const headers = new Headers();
-  headers.append('authorization', await getAuthToken());
-
-  const response = await fetch(url, {
-    headers,
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    console.error('Error fetching users:', data);
-    throw new Error(`Error fetching users`);
-  }
-
-  if (!isGetVBUsersResponse(data)) {
-    throw new Error('Invalid response from server');
-  }
-
-  console.log('data', data);
-
-  return data.users.map((dat) => ({
-    user: new ViceBankUser(dat.user),
-    currentTokens: dat.currentTokens,
-  }));
-}
-
-export async function getVBUserById(vbUserId: string) {
-  const url = `${getBaseUrl()}/vice_bank/user?vbUserId=${vbUserId}`;
+export async function getVBUser(vbUserId: string): Promise<VBUserTokens> {
+  const url = `${getBaseUrl()}/vice_bank/user?userId=${vbUserId}`;
 
   const headers = new Headers();
   headers.append('authorization', await getAuthToken());
@@ -65,17 +31,23 @@ export async function getVBUserById(vbUserId: string) {
   const dat = await response.json();
 
   if (!response.ok) {
+    console.log('response', response);
+    if (response.status === 404) {
+      console.log('throw not found error');
+      throw new NotFoundError();
+    }
     console.error('Error fetching user:', dat);
     throw new Error(`Error fetching user`);
   }
 
-  const vbUser = dat.user;
-
-  if (!ViceBankUser.isViceBankUserJSON(vbUser)) {
+  if (!isGetVBUserResponse(dat)) {
     throw new Error('Invalid response from server');
   }
 
-  return new ViceBankUser(vbUser);
+  return {
+    user: new ViceBankUser(dat.user),
+    currentTokens: dat.currentTokens,
+  };
 }
 
 interface AddVBUserPayload {
@@ -167,7 +139,7 @@ export async function deleteVBUser(vbUserId: string): Promise<ViceBankUser> {
 }
 
 export async function getUserTokens(vbUserId: string) {
-  const url = `${getBaseUrl()}/vice_bank/userTokens?vbUserId=${vbUserId}`;
+  const url = `${getBaseUrl()}/vice_bank/userTokens?userId=${vbUserId}`;
 
   const headers = new Headers();
   headers.append('authorization', await getAuthToken());

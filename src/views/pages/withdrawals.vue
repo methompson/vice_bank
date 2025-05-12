@@ -27,83 +27,77 @@
     />
   </VDialog>
 
-  <NoUserSelected>
-    <VContainer>
-      <VRow v-if="rewards.length === 0" align="center">
-        <VCol cols="12">
-          <span class="text-h5">Rewards</span>
-        </VCol>
+  <VContainer>
+    <VRow v-if="rewards.length === 0" align="center">
+      <VCol cols="12">
+        <span class="text-h5">Rewards</span>
+      </VCol>
 
-        <VCol cols="12" class="w-100 text-center">
-          <VBtn
-            @click="showAddRewardDialog"
-            color="primary"
-            class="text-center"
-          >
-            Add a Reward
-          </VBtn>
-        </VCol>
-      </VRow>
+      <VCol cols="12" class="w-100 text-center">
+        <VBtn @click="showAddRewardDialog" color="primary" class="text-center">
+          Add a Reward
+        </VBtn>
+      </VCol>
+    </VRow>
 
-      <VRow v-else align="center">
-        <VCol cols="auto">
-          <span class="text-h5">Rewards</span>
-        </VCol>
+    <VRow v-else align="center">
+      <VCol cols="auto">
+        <span class="text-h5">Rewards</span>
+      </VCol>
 
-        <VSpacer />
+      <VSpacer />
 
-        <VCol class="text-end">
-          <VBtn @click="showAddRewardDialog" color="primary" icon="mdi-plus" />
-        </VCol>
-      </VRow>
+      <VCol class="text-end">
+        <VBtn @click="showAddRewardDialog" color="primary" icon="mdi-plus" />
+      </VCol>
+    </VRow>
 
-      <VRow v-if="rewards.length > 0">
-        <VCol v-for="reward in rewards" :key="reward.id" cols="12" md="6">
-          <RewardCard
-            :reward="reward"
-            @click="showAddWithdrawalDialog(reward)"
-            @updateReward="showEditRewardDialog(reward)"
-            @deleteReward="deleteReward"
-          />
-        </VCol>
-      </VRow>
+    <VRow v-if="rewards.length > 0">
+      <VCol v-for="reward in rewards" :key="reward.id" cols="12" md="6">
+        <RewardCard
+          :reward="reward"
+          @click="showAddWithdrawalDialog(reward)"
+          @updateReward="showEditRewardDialog(reward)"
+          @deleteReward="deleteReward"
+        />
+      </VCol>
+    </VRow>
 
-      <VRow>
-        <VCol v-if="showPurchaseHistory" cols="12">
-          <!-- Put list of purchase hisotry here -->
-          <span class="text-h5">Purchase History</span>
-        </VCol>
+    <VRow>
+      <VCol v-if="showPurchaseHistory" cols="12">
+        <!-- Put list of purchase hisotry here -->
+        <span class="text-h5">Purchase History</span>
+      </VCol>
 
-        <VExpansionPanels multiple>
-          <VExpansionPanel
-            v-for="[date, history] in Object.entries(purchaseHistory)"
-            :key="date"
-          >
-            <VExpansionPanelTitle>
-              {{ makeFriendlyYear(date) }} - {{ history.length }}
-              {{ history.length === 1 ? 'Purchase' : 'Purchases' }}
-            </VExpansionPanelTitle>
+      <VExpansionPanels multiple>
+        <VExpansionPanel
+          v-for="[date, history] in Object.entries(purchaseHistory)"
+          :key="date"
+        >
+          <VExpansionPanelTitle>
+            {{ makeFriendlyYear(date) }} - {{ history.length }}
+            {{ history.length === 1 ? 'Purchase' : 'Purchases' }}
+          </VExpansionPanelTitle>
 
-            <VExpansionPanelText>
-              <VRow>
-                <VCol
-                  v-for="purchase in history"
-                  :key="purchase.id"
-                  cols="12"
-                  class="pa-1"
-                >
-                  <PurchaseCard
-                    :purchase="purchase"
-                    @deletePurchase="deletePurchase"
-                  />
-                </VCol>
-              </VRow>
-            </VExpansionPanelText>
-          </VExpansionPanel>
-        </VExpansionPanels>
-      </VRow>
-    </VContainer>
-  </NoUserSelected>
+          <VExpansionPanelText>
+            <VRow>
+              <VCol
+                v-for="purchase in history"
+                :key="purchase.id"
+                cols="12"
+                class="pa-1"
+              >
+                <PurchaseCard
+                  :purchase="purchase"
+                  @deletePurchase="deletePurchase"
+                />
+              </VCol>
+            </VRow>
+          </VExpansionPanelText>
+        </VExpansionPanel>
+      </VExpansionPanels>
+    </VRow>
+  </VContainer>
 </template>
 
 <script setup lang="ts">
@@ -123,7 +117,6 @@ import { Reward } from '@vice_bank/models/reward';
 import type { Purchase } from '@vice_bank/models/purchase';
 import { useHistoryComposable } from '@/views/pages/history_composable';
 
-import NoUserSelected from '@/views/components/root_components/no_user_selected.vue';
 import AddRewardDialog from '@/views/components/dialogs/add_reward_dialog.vue';
 import RewardCard from '@/views/components/rewards/reward_card.vue';
 import AddPurchaseDialog from '@/views/components/dialogs/add_purchase_dialog.vue';

@@ -11,7 +11,7 @@
         </VCol>
 
         <VCol class="text-center" cols="12">
-          Tokens Available: {{ currentUserTokens }}
+          Tokens Available: {{ tokensAvailable }}
         </VCol>
 
         <VCol cols="12">
@@ -49,6 +49,7 @@ import RewardCard from '@/views/components/rewards/reward_card.vue';
 import TextDatePicker from '@/views/components/text_date_picker.vue';
 import { useViceBankStore } from '@/stores/vice_bank_store';
 import { storeToRefs } from 'pinia';
+import { getTokensEarnedString } from '@/utils/tokens_earned';
 
 const props = withDefaults(
   defineProps<{
@@ -72,6 +73,10 @@ const { currentUserTokens } = storeToRefs(vbStore);
 
 const quantity = ref(0);
 
+const tokensAvailable = computed(() =>
+  getTokensEarnedString(currentUserTokens.value),
+);
+
 const addOnDate: Ref<DateTime<true>> = ref(DateTime.now().startOf('day'));
 
 const purchase = computed(() => {
@@ -87,7 +92,7 @@ const maxQuantity = computed(() => {
 
 const remainingTokens = computed(() => {
   const remaining = currentUserTokens.value - purchase.value.tokensSpent;
-  return remaining < 0 ? 0 : remaining;
+  return getTokensEarnedString(remaining < 0 ? 0 : remaining);
 });
 
 const saveDisabled = computed(() => {

@@ -2,6 +2,10 @@
   <CommonDialog :loading="loading" @close="close" title="Add User">
     <VContainer class="px-0">
       <VRow>
+        <VCol cols="12">
+          <p>You must create a user to continue.</p>
+        </VCol>
+
         <VCol>
           <VTextField
             v-model="name"

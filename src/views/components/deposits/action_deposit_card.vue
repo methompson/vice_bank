@@ -18,7 +18,7 @@
             </VCol>
 
             <VCol class="pa-0 cardInfo" cols="12">
-              Earned {{ actionDeposit.tokensEarned }} {{ tokenName }}
+              Earned {{ tokensEarned }} {{ tokenName }}
             </VCol>
           </VRow>
         </VCol>
@@ -55,6 +55,7 @@ import { computed, toRefs } from 'vue';
 import { DateTime } from 'luxon';
 
 import type { ActionDeposit } from '@vice_bank/models/action_deposit';
+import { getTokensEarnedString } from '@/utils/tokens_earned';
 
 const props = defineProps<{
   actionDeposit: ActionDeposit;
@@ -69,6 +70,9 @@ const depositDate = computed(() => {
   return actionDeposit.value.date.toLocaleString(DateTime.DATE_MED);
 });
 
+const tokensEarned = computed(() =>
+  getTokensEarnedString(actionDeposit.value.tokensEarned),
+);
 const tokenName = computed(() => {
   return actionDeposit.value.tokensEarned === 1 ? 'token' : 'tokens';
 });
@@ -82,10 +86,7 @@ function deleteActionDeposit() {
 .cardDate {
   font-size: 0.7rem;
 }
-.cardName {
-  font-size: 1rem;
-  padding-bottom: 0.2rem;
-}
+
 .cardInfo {
   font-size: 0.8rem;
 }

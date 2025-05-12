@@ -49,93 +49,86 @@
     />
   </VDialog>
 
-  <NoUserSelected>
-    <VContainer>
-      <VRow v-if="itemsList.length === 0" align="center">
-        <VCol cols="12">
-          <span class="text-h5">Actions and Tasks</span>
-        </VCol>
+  <VContainer>
+    <VRow v-if="itemsList.length === 0" align="center">
+      <VCol cols="12">
+        <span class="text-h5">Actions and Tasks</span>
+      </VCol>
 
-        <VCol cols="12" class="w-100 text-center">
-          <VBtn @click="showAddDialog" color="primary">
-            Add an Action or Task
-          </VBtn>
-        </VCol>
-      </VRow>
+      <VCol cols="12" class="w-100 text-center">
+        <VBtn @click="showAddDialog" color="primary">
+          Add an Action or Task
+        </VBtn>
+      </VCol>
+    </VRow>
 
-      <VRow v-else align="center">
-        <VCol cols="auto">
-          <span class="text-h5">Actions and Tasks</span>
-        </VCol>
+    <VRow v-else align="center">
+      <VCol cols="auto">
+        <span class="text-h5">Actions and Tasks</span>
+      </VCol>
 
-        <VSpacer />
+      <VSpacer />
 
-        <VCol class="text-end">
-          <VBtn @click="showAddDialog" color="primary" icon="mdi-plus" />
-        </VCol>
-      </VRow>
+      <VCol class="text-end">
+        <VBtn @click="showAddDialog" color="primary" icon="mdi-plus" />
+      </VCol>
+    </VRow>
 
-      <VRow v-if="itemsList.length > 0">
-        <VCol v-for="item in itemsList" :key="item.id" cols="12" md="6">
-          <ActionCard
-            v-if="isAction(item)"
-            :action="item"
-            @click="showAddActionDepositDialog(item)"
-            @deleteAction="deleteAction"
-            @updateAction="showUpdateActionDialog"
-          />
-          <TaskCard
-            v-if="isTask(item)"
-            :task="item"
-            @click="showAddTaskDepositDialog(item)"
-            @deleteTask="deleteTask"
-            @updateTask="showUpdateTaskDialog"
-          />
-        </VCol>
-      </VRow>
+    <VRow v-if="itemsList.length > 0">
+      <VCol v-for="item in itemsList" :key="item.id" cols="12" md="6">
+        <ActionCard
+          v-if="isAction(item)"
+          :action="item"
+          @click="showAddActionDepositDialog(item)"
+          @deleteAction="deleteAction"
+          @updateAction="showUpdateActionDialog"
+        />
+        <TaskCard
+          v-if="isTask(item)"
+          :task="item"
+          @click="showAddTaskDepositDialog(item)"
+          @deleteTask="deleteTask"
+          @updateTask="showUpdateTaskDialog"
+        />
+      </VCol>
+    </VRow>
 
-      <VRow v-if="showDepositHistory">
-        <VCol cols="12">
-          <!-- Put list of deposit hisotry here -->
-          <span class="text-h5"> Deposit History </span>
-        </VCol>
+    <VRow v-if="showDepositHistory">
+      <VCol cols="12">
+        <!-- Put list of deposit hisotry here -->
+        <span class="text-h5"> Deposit History </span>
+      </VCol>
 
-        <VExpansionPanels multiple>
-          <VExpansionPanel
-            v-for="[date, history] in Object.entries(depositHistory)"
-            :key="date"
-          >
-            <VExpansionPanelTitle>
-              {{ makeFriendlyYear(date) }} - {{ history.length }}
-              {{ history.length === 1 ? 'deposit' : 'deposits' }}
-            </VExpansionPanelTitle>
+      <VExpansionPanels multiple>
+        <VExpansionPanel
+          v-for="[date, history] in Object.entries(depositHistory)"
+          :key="date"
+        >
+          <VExpansionPanelTitle>
+            {{ makeFriendlyYear(date) }} - {{ history.length }}
+            {{ history.length === 1 ? 'deposit' : 'deposits' }}
+          </VExpansionPanelTitle>
 
-            <VExpansionPanelText>
-              <VRow>
-                <VCol
-                  v-for="dep in history"
-                  :key="dep.id"
-                  cols="12"
-                  class="pa-1"
-                >
-                  <ActionDepositCard
-                    v-if="isActionDeposit(dep)"
-                    :actionDeposit="dep"
-                    @deleteActionDeposit="deleteActionDeposit"
-                  />
-                  <TaskDepositCard
-                    v-if="isTaskDeposit(dep)"
-                    :taskDeposit="dep"
-                    @deleteTaskDeposit="deleteTaskDeposit"
-                  />
-                </VCol>
-              </VRow>
-            </VExpansionPanelText>
-          </VExpansionPanel>
-        </VExpansionPanels>
-      </VRow>
-    </VContainer>
-  </NoUserSelected>
+          <VExpansionPanelText>
+            <VRow>
+              <VCol v-for="dep in history" :key="dep.id" cols="12" class="pa-1">
+                <ActionDepositCard
+                  v-if="isActionDeposit(dep)"
+                  :actionDeposit="dep"
+                  @deleteActionDeposit="deleteActionDeposit"
+                />
+                <TaskDepositCard
+                  v-if="isTaskDeposit(dep)"
+                  :taskDeposit="dep"
+                  @deleteTaskDeposit="deleteTaskDeposit"
+                />
+              </VCol>
+            </VRow>
+          </VExpansionPanelText>
+        </VExpansionPanel>
+      </VExpansionPanels>
+    </VRow>
+  </VContainer>
 </template>
 
 <script setup lang="ts">
@@ -156,7 +149,6 @@ import { useAppStore } from '@/stores/app_store';
 import { Task } from '@vice_bank/models/task';
 import { useHistoryComposable } from '@/views/pages/history_composable';
 
-import NoUserSelected from '@/views/components/root_components/no_user_selected.vue';
 import AddActionTaskDialog from '@/views/components/dialogs/add_action_task_dialog.vue';
 import ActionCard from '@/views/components/deposits/action_card.vue';
 import TaskCard from '@/views/components/deposits/task_card.vue';
@@ -552,21 +544,3 @@ async function beforeMountHandler() {
 
 onBeforeMount(beforeMountHandler);
 </script>
-
-<style lang="scss">
-.actionCardTitle {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  .title {
-    font-size: 1rem;
-    font-weight: bold;
-  }
-
-  .subtitle {
-    font-size: 0.75rem;
-    font-weight: 400;
-  }
-}
-</style>

@@ -19,49 +19,22 @@ import * as taskDepositsAPI from '@/api/task_deposits';
 import * as rewardsAPI from '@/api/rewards';
 import * as purchasesAPI from '@/api/purchases';
 import type { VBUserTokens } from '@/utils/vb_user_types';
+import { getUserId } from '@/utils/auth';
 
 export const useViceBankStore = defineStore('viceBankStore', () => {
   // #region Users
-  const vbUsersAndTokensState: Ref<VBUserTokens[]> = ref([]);
-  const vbUsersAndTokens = computed(() => [...vbUsersAndTokensState.value]);
-  const vbUsers = computed(() =>
-    vbUsersAndTokensState.value.map((dat) => dat.user),
+  const currentUserState: Ref<VBUserTokens | undefined> = ref(undefined);
+  const currentUser: ComputedRef<ViceBankUser | undefined> = computed(() =>
+    currentUserState.value ? currentUserState.value.user : undefined,
   );
-  const userMap = computed(() => {
-    return arrayToObject(vbUsers.value, (u) => u.id);
-  });
+  const currentUserTokens = computed(() =>
+    currentUserState.value ? currentUserState.value.currentTokens : 0,
+  );
 
-  const currentUserId: Ref<string | undefined> = ref(undefined);
-  const currentUser: ComputedRef<ViceBankUser | undefined> = computed(() => {
-    if (!currentUserId.value) {
-      return undefined;
-    }
-    return userMap.value[currentUserId.value];
-  });
+  async function getUser() {
+    const userId = getUserId();
 
-  const currentUserTokensState: Ref<number | undefined> = ref(undefined);
-  const currentUserTokens = computed(() => currentUserTokensState.value ?? 0);
-
-  async function getUserTokens(vbUserId: string) {
-    currentUserTokensState.value = await usersAPI.getUserTokens(vbUserId);
-  }
-
-  async function setCurrentUser(user: ViceBankUser) {
-    if (!userMap.value[user.id]) {
-      throw new Error('Invalid user');
-    }
-
-    currentUserId.value = user.id;
-
-    await getUserTokens(user.id);
-  }
-
-  function clearCurrentUser() {
-    currentUserId.value = undefined;
-  }
-
-  async function getUsers() {
-    vbUsersAndTokensState.value = await usersAPI.getVBUsers();
+    currentUserState.value = await usersAPI.getVBUser(userId);
   }
 
   type AddUserPayload = {
@@ -69,17 +42,23 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
   };
   async function addUser(payload: AddUserPayload) {
     await usersAPI.addVBUser(payload);
-    await getUsers();
   }
 
   async function updateUser(updatedUser: ViceBankUser) {
     await usersAPI.updateVBUser(updatedUser);
-    await getUsers();
   }
 
   async function deleteUser(vbUserId: string) {
     await usersAPI.deleteVBUser(vbUserId);
-    await getUsers();
+  }
+
+  async function getUserTokens() {
+    if (!currentUserState.value) {
+      throw new Error('No user selected');
+    }
+    currentUserState.value.currentTokens = await usersAPI.getUserTokens(
+      currentUserState.value.user.id,
+    );
   }
 
   // #endregion
@@ -156,7 +135,7 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
     await actionDepositsAPI.addActionDeposit(actionDeposit);
     await Promise.all([
       getActionDeposits(actionDeposit.vbUserId),
-      getUserTokens(actionDeposit.vbUserId),
+      getUserTokens(),
     ]);
   }
 
@@ -164,7 +143,7 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
     await actionDepositsAPI.updateActionDeposit(actionDeposit);
     await Promise.all([
       getActionDeposits(actionDeposit.vbUserId),
-      getUserTokens(actionDeposit.vbUserId),
+      getUserTokens(),
     ]);
   }
 
@@ -172,7 +151,7 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
     await actionDepositsAPI.deleteActionDeposit(actionDeposit.id);
     await Promise.all([
       getActionDeposits(actionDeposit.vbUserId),
-      getUserTokens(actionDeposit.vbUserId),
+      getUserTokens(),
     ]);
   }
 
@@ -193,26 +172,17 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
 
   async function addNewTaskDeposit(taskDeposit: TaskDeposit) {
     await taskDepositsAPI.addTaskDeposit(taskDeposit);
-    await Promise.all([
-      getTaskDeposits(taskDeposit.vbUserId),
-      getUserTokens(taskDeposit.vbUserId),
-    ]);
+    await Promise.all([getTaskDeposits(taskDeposit.vbUserId), getUserTokens()]);
   }
 
   async function updateTaskDeposit(taskDeposit: TaskDeposit) {
     await taskDepositsAPI.updateTaskDeposit(taskDeposit);
-    await Promise.all([
-      getTaskDeposits(taskDeposit.vbUserId),
-      getUserTokens(taskDeposit.vbUserId),
-    ]);
+    await Promise.all([getTaskDeposits(taskDeposit.vbUserId), getUserTokens()]);
   }
 
   async function deleteTaskDeposit(taskDeposit: TaskDeposit) {
     await taskDepositsAPI.deleteTaskDeposit(taskDeposit.id);
-    await Promise.all([
-      getTaskDeposits(taskDeposit.vbUserId),
-      getUserTokens(taskDeposit.vbUserId),
-    ]);
+    await Promise.all([getTaskDeposits(taskDeposit.vbUserId), getUserTokens()]);
   }
 
   // #endregion
@@ -258,43 +228,29 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
 
   async function addPurchase(purchase: Purchase) {
     await purchasesAPI.addPurchase(purchase);
-    await Promise.all([
-      getPurchases(purchase.vbUserId),
-      getUserTokens(purchase.vbUserId),
-    ]);
+    await Promise.all([getPurchases(purchase.vbUserId), getUserTokens()]);
   }
 
   async function updatePurchase(purchase: Purchase) {
     await purchasesAPI.updatePurchase(purchase);
-    await Promise.all([
-      getPurchases(purchase.vbUserId),
-      getUserTokens(purchase.vbUserId),
-    ]);
+    await Promise.all([getPurchases(purchase.vbUserId), getUserTokens()]);
   }
 
   async function deletePurchase(purchase: Purchase) {
     await purchasesAPI.deletePurchase(purchase.id);
-    await Promise.all([
-      getPurchases(purchase.vbUserId),
-      getUserTokens(purchase.vbUserId),
-    ]);
+    await Promise.all([getPurchases(purchase.vbUserId), getUserTokens()]);
   }
 
   // #endregion
 
   return {
     // Users
-    vbUsers,
-    vbUsersAndTokens,
     currentUser,
-    clearCurrentUser,
-    setCurrentUser,
-    getUsers,
+    currentUserTokens,
+    getUser,
     addUser,
     updateUser,
     deleteUser,
-
-    currentUserTokens,
 
     // actions
     actions,

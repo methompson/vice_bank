@@ -1,51 +1,47 @@
 <template>
-  <NoUserSelected>
-    <VContainer>
-      <VRow>
-        <VCol cols="12" sm="6">
-          <VCard :color="cardColor">
-            <VCardTitle> Purchases </VCardTitle>
+  <VContainer>
+    <VRow>
+      <VCol cols="12" sm="6">
+        <VCard :color="cardColor">
+          <VCardTitle> Purchases </VCardTitle>
 
-            <VCardText>
-              <VRow>
-                <VCol cols="12">
-                  <div>Past Week Purchases</div>
-                </VCol>
-                <VCol cols="12">
-                  <div>0</div>
-                </VCol>
-              </VRow>
-            </VCardText>
-          </VCard>
-        </VCol>
+          <VCardText>
+            <VRow>
+              <VCol cols="12">
+                <div>Past Week Purchases</div>
+              </VCol>
+              <VCol cols="12">
+                <div>0</div>
+              </VCol>
+            </VRow>
+          </VCardText>
+        </VCard>
+      </VCol>
 
-        <VCol cols="12" sm="6">
-          <VCard :color="cardColor">
-            <VCardTitle> Deposits </VCardTitle>
+      <VCol cols="12" sm="6">
+        <VCard :color="cardColor">
+          <VCardTitle> Deposits </VCardTitle>
 
-            <VCardText>
-              <VRow>
-                <VCol cols="12">
-                  <div>Past Week Deposits</div>
-                </VCol>
-                <VCol cols="12">
-                  <div>0</div>
-                </VCol>
-              </VRow>
-            </VCardText>
-          </VCard>
-        </VCol>
-      </VRow>
-    </VContainer>
-  </NoUserSelected>
+          <VCardText>
+            <VRow>
+              <VCol cols="12">
+                <div>Past Week Deposits</div>
+              </VCol>
+              <VCol cols="12">
+                <div>0</div>
+              </VCol>
+            </VRow>
+          </VCardText>
+        </VCard>
+      </VCol>
+    </VRow>
+  </VContainer>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 
 import { useAppStore } from '@/stores/app_store';
-
-import NoUserSelected from '@/views/components/root_components/no_user_selected.vue';
 
 const appStore = useAppStore();
 
