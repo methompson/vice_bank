@@ -1,4 +1,4 @@
-import { isArrayOfGenerator } from 'tcheck';
+import { isArrayOfGenerator } from '@metools/tcheck';
 
 import {
   ActionDeposit,

@@ -31,7 +31,7 @@ import {
   type User,
 } from 'firebase/auth';
 import { computed, onBeforeMount, ref, type Ref } from 'vue';
-import { isUndefinedOrNull } from 'tcheck';
+import { isUndefinedOrNull } from '@metools/tcheck';
 
 import { getFirebaseConfig } from '@/utils/get_firebase_config';
 import { useViceBankStore } from '@/stores/vice_bank_store';

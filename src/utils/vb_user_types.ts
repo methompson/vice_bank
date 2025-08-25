@@ -2,7 +2,7 @@ import {
   ViceBankUser,
   type ViceBankUserJSON,
 } from '@vice_bank/models/vice_bank_user';
-import { isNumber, typeGuardGenerator } from 'tcheck';
+import { isNumber, typeGuardGenerator } from '@metools/tcheck';
 
 export interface VBUserTokens {
   user: ViceBankUser;

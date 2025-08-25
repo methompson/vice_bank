@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { isNumber, isString, typeGuardGenerator } from 'tcheck';
+import { isNumber, isString, typeGuardGenerator } from '@metools/tcheck';
 import { computed, onBeforeMount, ref, type Ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 

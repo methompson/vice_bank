@@ -1,12 +1,4 @@
 <template>
-  <VDialog v-model="userSelect">
-    <VCard>
-      <VCardText>
-        <UserSelect @close="closeUserSelect" />
-      </VCardText>
-    </VCard>
-  </VDialog>
-
   <VContainer>
     <VRow>
       <VCol>
@@ -34,14 +26,6 @@
 
     <VRow>
       <VCol>
-        <VBtn @click="showUserSelect" color="primary" class="w-100">
-          Select a User
-        </VBtn>
-      </VCol>
-    </VRow>
-
-    <VRow>
-      <VCol>
         <VBtn color="primary" class="w-100">Logging</VBtn>
       </VCol>
     </VRow>
@@ -59,19 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import { useAuthComposable } from '@/views/pages/auth_composable';
 
 const { logout } = useAuthComposable();
-
-const userSelect = ref(false);
-
-function showUserSelect() {
-  userSelect.value = true;
-}
-
-function closeUserSelect() {
-  userSelect.value = false;
-}
 </script>

@@ -74,7 +74,7 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref, type Ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
-import { isNumber, isString, typeGuardGenerator } from 'tcheck';
+import { isNumber, isString, typeGuardGenerator } from '@metools/tcheck';
 
 import { Action, type ActionJSON } from '@vice_bank/models/action';
 import { useViceBankStore } from '@/stores/vice_bank_store';

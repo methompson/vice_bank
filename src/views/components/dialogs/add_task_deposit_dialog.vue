@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import { computed, ref, toRefs, type Ref } from 'vue';
 import { DateTime } from 'luxon';
-import { isString } from 'tcheck';
+import { isString } from '@metools/tcheck';
 
 import type { Task } from '@vice_bank/models/task';
 import { TaskDeposit } from '@vice_bank/models/task_deposit';

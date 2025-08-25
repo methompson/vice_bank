@@ -10,7 +10,7 @@ import {
   isUndefinedOrNull,
   typeGuardGenerator,
   unionGuard,
-} from 'tcheck';
+} from '@metools/tcheck';
 
 interface VBUserLocalDataPayload {
   vbUserTokens?: VBUserTokens[];

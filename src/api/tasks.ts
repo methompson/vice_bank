@@ -1,4 +1,4 @@
-import { isArrayOfGenerator } from 'tcheck';
+import { isArrayOfGenerator } from '@metools/tcheck';
 
 import { Task } from '@vice_bank/models/task';
 import { getAuthToken, getBaseUrl } from '@/utils/auth';

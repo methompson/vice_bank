@@ -1,4 +1,4 @@
-import { isNumber, typeGuardGenerator } from 'tcheck';
+import { isNumber, typeGuardGenerator } from '@metools/tcheck';
 
 import {
   ViceBankUser,

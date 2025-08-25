@@ -19,7 +19,7 @@
 import { computed, toRefs } from 'vue';
 
 import { useAppStore } from '@/stores/app_store';
-import { isUndefined } from 'tcheck';
+import { isUndefined } from '@metools/tcheck';
 
 const appStore = useAppStore();
 
