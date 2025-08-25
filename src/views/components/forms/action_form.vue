@@ -151,6 +151,9 @@ const isInputValid = computed(() => {
 function saveAction() {
   const id = props.action?.id ?? uuidv4();
   const vbUserId = props.action?.vbUserId ?? vbStore.currentUser?.id;
+  console.log({
+    currentUser: vbStore.currentUser,
+  });
 
   if (!vbUserId) {
     console.error('No user ID found');

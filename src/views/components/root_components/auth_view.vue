@@ -65,7 +65,8 @@ async function saveNewUser(name: string) {
     appStore.setSuccessMessage({
       message: 'User added successfully',
     });
-  } catch (e) {
+  } catch (_e) {
+    // Do Nothing
   } finally {
     loading.value = false;
     showAddUserDialog.value = false;

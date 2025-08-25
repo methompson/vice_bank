@@ -32,6 +32,7 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
   );
 
   async function getUser() {
+    console.log('getting user');
     const userId = getUserId();
 
     currentUserState.value = await usersAPI.getVBUser(userId);
@@ -42,6 +43,7 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
   };
   async function addUser(payload: AddUserPayload) {
     await usersAPI.addVBUser(payload);
+    await getUser();
   }
 
   async function updateUser(updatedUser: ViceBankUser) {
