@@ -1,5 +1,5 @@
 appName=vice_bank_app
-registryUrl=con.kakomu.com
+registryUrl=container.kakomu.com
 
 compileApp() {
   rm -rf dist
