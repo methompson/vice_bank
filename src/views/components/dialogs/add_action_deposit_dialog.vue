@@ -75,7 +75,7 @@ const deposit = computed(() => {
 });
 
 const tokensEarned = computed(() => {
-  return deposit.value.tokensEarned;
+  return deposit.value.tokensEarned.toFixed(2);
 });
 
 function close() {
