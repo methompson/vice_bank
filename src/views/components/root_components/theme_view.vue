@@ -18,12 +18,14 @@ function themeChangeWatcher(event: MediaQueryListEvent) {
 }
 
 function setDarkMode() {
-  theme.global.name.value = 'dark';
+  theme.change('dark');
+  // theme.global.name.value = 'dark';
   appStore.isDarkMode = true;
 }
 
 function setLightMode() {
-  theme.global.name.value = 'light';
+  theme.change('light');
+  // theme.global.name.value = 'light';
   appStore.isDarkMode = false;
 }
 
