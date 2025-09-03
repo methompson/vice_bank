@@ -105,8 +105,11 @@
           :key="date"
         >
           <VExpansionPanelTitle>
-            {{ makeFriendlyYear(date) }} - {{ history.length }}
-            {{ history.length === 1 ? 'deposit' : 'deposits' }}
+            {{ makeFriendlyYear(date) }}
+            -
+            {{ formatHistoryTotalForDay(history) }}
+            -
+            {{ formatTokenTotalForDay(history) }}
           </VExpansionPanelTitle>
 
           <VExpansionPanelText>
@@ -487,6 +490,32 @@ const depositHistory: ComputedRef<
 
   return dateMap;
 });
+
+function formatTokenTotalForDay(
+  history: (ActionDeposit | TaskDeposit)[],
+): string {
+  const total = history.reduce(
+    (numTotal, deposit) => numTotal + deposit.tokensEarned,
+    0,
+  );
+
+  const plural = total === 1 ? 'Token' : 'Tokens';
+
+  const formattedTotal = Number.isInteger(total)
+    ? total.toString()
+    : total.toFixed(2);
+
+  return formattedTotal + ' ' + plural;
+}
+
+function formatHistoryTotalForDay(
+  history: (ActionDeposit | TaskDeposit)[],
+): string {
+  const total = history.length;
+  const plural = total === 1 ? 'Deposit' : 'Deposits';
+
+  return total + ' ' + plural;
+}
 
 async function deleteActionDeposit(actionDeposit: ActionDeposit) {
   loading.value = true;
