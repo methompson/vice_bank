@@ -259,9 +259,7 @@ const pmButtonClasses = computed(() => {
 const timeRegex = /^[012]{0,1}[0-9]:[0-5][0-9]$/;
 
 function beforeMountHandler() {
-  console.log('Before Mount', timeModel.value);
   if (!isString(timeModel.value) || !timeRegex.test(timeModel.value)) {
-    console.log('first if');
     hourStr.value = '12';
     minuteStr.value = '00';
     timeModel.value = twentyFourHrsTime.value;
@@ -280,7 +278,6 @@ function beforeMountHandler() {
   }
 
   if (ampm.value) {
-    console.log('third if');
     if (hr >= 12) {
       isAm.value = false;
     } else {
