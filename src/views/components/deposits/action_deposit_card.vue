@@ -67,7 +67,7 @@ const emit = defineEmits<{
 }>();
 
 const depositDate = computed(() => {
-  return actionDeposit.value.date.toLocaleString(DateTime.DATE_MED);
+  return actionDeposit.value.date.toLocaleString(DateTime.DATETIME_MED);
 });
 
 const tokensEarned = computed(() =>

@@ -18,7 +18,7 @@
           <VCol align-self="center">
             <span class="timeInputContainer">
               <input
-                v-model="hour"
+                v-model="hourStr"
                 class="timeInputField"
                 size="1"
                 type="decimal"
@@ -27,7 +27,7 @@
               />
               <span class="timeColon px-1">:</span>
               <input
-                v-model="minute"
+                v-model="minuteStr"
                 class="timeInputField"
                 size="1"
                 type="decimal"
@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 import { isString } from '@metools/tcheck';
-import { computed, onBeforeMount, ref, toRefs } from 'vue';
+import { computed, onBeforeMount, ref, toRefs, watch } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -76,11 +76,68 @@ const { ampm } = toRefs(props);
 
 const timeModel = defineModel();
 
+const hour = ref('12');
+const minute = ref('0');
+
 const hourStr = ref('12');
 const minuteStr = ref('0');
 
-const hour = ref('12');
-const minute = ref('0');
+watch(hourStr, (newVal) => {
+  // Empty string, leave as-is for now
+  if (newVal.length === 0) {
+    return;
+  }
+
+  const parsedHr = Number.parseInt(newVal, 10);
+
+  if (parsedHr === 0) {
+    // Deleting a value and zero exists, leave as-is for now
+    return;
+  } else if (Number.isNaN(parsedHr)) {
+    // Not valid, just reset the number back
+    hourStr.value = hour.value;
+  } else if (ampm.value) {
+    if (parsedHr < 1 || parsedHr > 12) {
+      // Invalid, reset the time
+      hourStr.value = hour.value;
+    } else {
+      // Valid, set the hour value
+      hour.value = hourStr.value;
+    }
+  } else {
+    if (parsedHr < 0 || parsedHr > 23) {
+      // Invalid, reset the time
+      hourStr.value = hour.value;
+    } else {
+      // Valid, set the hour value
+      hour.value = hourStr.value;
+    }
+  }
+
+  setModelToNewValue();
+});
+
+watch(minuteStr, (newVal) => {
+  // Empty string, leave as-is for now
+  if (newVal.length === 0) {
+    return;
+  }
+
+  // Not valid, just reset the number back
+  const parsedMin = Number.parseInt(newVal, 10);
+  // Deleting a value and zero exists, leave as-is for now
+  if (parsedMin === 0 && newVal === '0') {
+    return;
+  } else if (Number.isNaN(parsedMin)) {
+    minuteStr.value = minute.value;
+  } else if (parsedMin < 0 || parsedMin > 59) {
+    minuteStr.value = minute.value;
+  } else {
+    minute.value = newVal;
+  }
+
+  setModelToNewValue();
+});
 
 /** Raw Number from the hour input */
 const hourNum = computed(() => {
@@ -100,12 +157,18 @@ const hourInputMax = computed(() => {
   return ampm.value ? 12 : 23;
 });
 
+function setModelToNewValue() {
+  timeModel.value = twentyFourHrsTime.value;
+}
+
 function setTimePeriod(timePeriod: 'am' | 'pm') {
   if (timePeriod === 'am') {
     isAm.value = true;
   } else {
     isAm.value = false;
   }
+
+  setModelToNewValue();
 }
 
 function timeValidator(
@@ -170,8 +233,7 @@ const ampmTime = computed(() => {
   const min = `${minuteNum.value}`.padStart(2, '0');
 
   if (ampm.value) {
-    const hr = isAm.value ? hourNum.value : hourNum.value + 12;
-    return `${hr}:${min}${isAm.value ? 'am' : 'pm'}`;
+    return `${hourNum.value}:${min} ${isAm.value ? 'am' : 'pm'}`;
   } else {
     const hrNum = hourNum.value === 0 ? 12 : hourNum.value % 12;
 
@@ -199,8 +261,8 @@ const timeRegex = /^[012]{0,1}[0-9]:[0-5][0-9]$/;
 function beforeMountHandler() {
   console.log('Before Mount', timeModel.value);
   if (!isString(timeModel.value) || !timeRegex.test(timeModel.value)) {
-    hour.value = '12';
-    minute.value = '00';
+    hourStr.value = '12';
+    minuteStr.value = '00';
     timeModel.value = twentyFourHrsTime.value;
     return;
   }
@@ -210,8 +272,8 @@ function beforeMountHandler() {
     .map((el) => Number.parseInt(el, 10));
 
   if (!hr || !min || !timeValidator(hr, min, ampm.value)) {
-    hour.value = '12';
-    minute.value = '00';
+    hourStr.value = '12';
+    minuteStr.value = '00';
     timeModel.value = twentyFourHrsTime.value;
     return;
   }
@@ -222,11 +284,11 @@ function beforeMountHandler() {
     } else {
       isAm.value = true;
     }
-    hour.value = `${(hr ?? 12) % 12}`.padStart(2, '0');
-    minute.value = min.toString() ?? '00';
+    hourStr.value = `${(hr ?? 12) % 12}`.padStart(2, '0');
+    minuteStr.value = min.toString() ?? '00';
   } else {
-    hour.value = `${hr.toString().padStart(2, '0')}`;
-    minute.value = `${min.toString().padStart(2, '0')}`;
+    hourStr.value = `${hr.toString().padStart(2, '0')}`;
+    minuteStr.value = `${min.toString().padStart(2, '0')}`;
   }
 }
 

@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs, type Ref } from 'vue';
+import { computed, ref, toRefs, watch, type Ref } from 'vue';
 import { DateTime } from 'luxon';
 
 import type { Action } from '@vice_bank/models/action';
@@ -48,6 +48,7 @@ import ActionCard from '@/views/components/deposits/action_card.vue';
 
 import TextDatePicker from '@/views/components/text_date_picker.vue';
 import TextTimePicker from '@/views/components/text_time_picker.vue';
+import { isUndefinedOrNull } from '@metools/tcheck';
 
 const props = withDefaults(
   defineProps<{
@@ -70,7 +71,28 @@ const addOnTime: Ref<string> = ref(
   DateTime.now().toLocaleString(DateTime.TIME_24_SIMPLE),
 );
 
+watch(addOnTime, (newVal) => {
+  console.log('addOnTime changed', newVal);
+});
+
 const quantity = ref(0);
+
+const depositDateTime = computed(() => {
+  const [hr, min] = addOnTime.value
+    .split(':')
+    .map((v) => Number.parseInt(v, 10));
+
+  if (
+    isUndefinedOrNull(hr) ||
+    isUndefinedOrNull(min) ||
+    Number.isNaN(hr) ||
+    Number.isNaN(min)
+  ) {
+    return addOnDate.value;
+  }
+
+  return addOnDate.value.set({ hour: hr, minute: min });
+});
 
 const canDeposit = computed(() => {
   const max = action.value.maxDeposit ?? Number.MAX_VALUE;
@@ -79,7 +101,7 @@ const canDeposit = computed(() => {
 
 const deposit = computed(() => {
   return ActionDeposit.fromAction(action.value, quantity.value, {
-    date: addOnDate.value,
+    date: depositDateTime.value,
   });
 });
 
