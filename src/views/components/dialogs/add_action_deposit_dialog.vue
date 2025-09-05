@@ -1,15 +1,19 @@
 <template>
   <CommonDialog :loading="loading" @close="close" title="Deposit Action">
     <VContainer class="px-0">
-      <VRow justify="center" align="center">
+      <VRow justify="start" align="center">
         <VCol cols="12">
           <ActionCard :action="action" :showMenu="false" />
         </VCol>
 
         <VCol cols="12"> {{ tokensEarned }} Tokens Earned </VCol>
 
-        <VCol cols="12" class="text-center">
+        <VCol cols="6" class="text-center">
           <TextDatePicker v-model="addOnDate" />
+        </VCol>
+
+        <VCol cols="6" class="text-center">
+          <TextTimePicker v-model="addOnTime" />
         </VCol>
 
         <VCol cols="12">
@@ -41,7 +45,9 @@ import { ActionDeposit } from '@vice_bank/models/action_deposit';
 
 import CommonDialog from '@/views/components/common_dialog.vue';
 import ActionCard from '@/views/components/deposits/action_card.vue';
+
 import TextDatePicker from '@/views/components/text_date_picker.vue';
+import TextTimePicker from '@/views/components/text_time_picker.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -60,6 +66,9 @@ const emit = defineEmits<{
 }>();
 
 const addOnDate: Ref<DateTime<true>> = ref(DateTime.now().startOf('day'));
+const addOnTime: Ref<string> = ref(
+  DateTime.now().toLocaleString(DateTime.TIME_24_SIMPLE),
+);
 
 const quantity = ref(0);
 
