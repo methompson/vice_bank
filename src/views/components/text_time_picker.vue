@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { isString } from '@metools/tcheck';
+import { isNumber, isString } from '@metools/tcheck';
 import { computed, onBeforeMount, ref, toRefs, watch } from 'vue';
 
 const props = withDefaults(
@@ -261,6 +261,7 @@ const timeRegex = /^[012]{0,1}[0-9]:[0-5][0-9]$/;
 function beforeMountHandler() {
   console.log('Before Mount', timeModel.value);
   if (!isString(timeModel.value) || !timeRegex.test(timeModel.value)) {
+    console.log('first if');
     hourStr.value = '12';
     minuteStr.value = '00';
     timeModel.value = twentyFourHrsTime.value;
@@ -271,7 +272,7 @@ function beforeMountHandler() {
     .split(':')
     .map((el) => Number.parseInt(el, 10));
 
-  if (!hr || !min || !timeValidator(hr, min, ampm.value)) {
+  if (!isNumber(hr) || !isNumber(min) || !timeValidator(hr, min, false)) {
     hourStr.value = '12';
     minuteStr.value = '00';
     timeModel.value = twentyFourHrsTime.value;
@@ -279,6 +280,7 @@ function beforeMountHandler() {
   }
 
   if (ampm.value) {
+    console.log('third if');
     if (hr >= 12) {
       isAm.value = false;
     } else {
