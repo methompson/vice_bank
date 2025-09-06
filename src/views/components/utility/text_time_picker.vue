@@ -62,6 +62,10 @@
 <script setup lang="ts">
 import { isNumber, isString } from '@metools/tcheck';
 import { computed, onBeforeMount, ref, toRefs, watch } from 'vue';
+import {
+  convert12Hrsto24Hrs,
+  convert24HrsTo12Hrs,
+} from './text_time_picker_utility';
 
 const props = withDefaults(
   defineProps<{
@@ -83,6 +87,7 @@ const hourStr = ref('12');
 const minuteStr = ref('0');
 
 watch(hourStr, (newVal) => {
+  console.log('Hour string changed:', newVal);
   // Empty string, leave as-is for now
   if (newVal.length === 0) {
     return;
@@ -217,7 +222,7 @@ const twentyFourHrsTime = computed(() => {
   const min = `${minuteNum.value}`.padStart(2, '0');
 
   if (ampm.value) {
-    const hr = isAm.value ? hourNum.value : hourNum.value + 12;
+    const hr = convert12Hrsto24Hrs(hourNum.value, isAm.value);
     return `${hr.toString().padStart(2, '0')}:${min}`;
   } else {
     const hr = `${hourNum.value}`.padStart(2, '0');
@@ -235,7 +240,7 @@ const ampmTime = computed(() => {
   if (ampm.value) {
     return `${hourNum.value}:${min} ${isAm.value ? 'am' : 'pm'}`;
   } else {
-    const hrNum = hourNum.value === 0 ? 12 : hourNum.value % 12;
+    const hrNum = convert24HrsTo12Hrs(hourNum.value);
 
     return `${hrNum}:${min}`;
   }
@@ -283,7 +288,8 @@ function beforeMountHandler() {
     } else {
       isAm.value = true;
     }
-    hourStr.value = `${(hr ?? 12) % 12}`;
+
+    hourStr.value = `${convert24HrsTo12Hrs(hr)}`;
     minuteStr.value = min.toString().padStart(2, '0') ?? '00';
   } else {
     hourStr.value = `${hr.toString().padStart(2, '0')}`;

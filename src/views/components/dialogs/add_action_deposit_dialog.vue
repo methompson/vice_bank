@@ -47,7 +47,7 @@ import CommonDialog from '@/views/components/common_dialog.vue';
 import ActionCard from '@/views/components/deposits/action_card.vue';
 
 import TextDatePicker from '@/views/components/text_date_picker.vue';
-import TextTimePicker from '@/views/components/text_time_picker.vue';
+import TextTimePicker from '@/views/components/utility/text_time_picker.vue';
 import { isUndefinedOrNull } from '@metools/tcheck';
 
 const props = withDefaults(
