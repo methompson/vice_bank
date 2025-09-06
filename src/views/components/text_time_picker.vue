@@ -16,11 +16,11 @@
       <VCardText>
         <VRow justify="center">
           <VCol align-self="center">
-            <span class="timeInputContainer">
+            <div class="timeInputContainer">
               <input
                 v-model="hourStr"
                 class="timeInputField"
-                size="1"
+                size="3"
                 type="decimal"
                 :min="hourInputMin"
                 :max="hourInputMax"
@@ -29,7 +29,7 @@
               <input
                 v-model="minuteStr"
                 class="timeInputField"
-                size="1"
+                size="3"
                 type="decimal"
                 min="0"
                 max="59"
@@ -51,7 +51,7 @@
                   PM
                 </button>
               </span>
-            </span>
+            </div>
           </VCol>
         </VRow>
       </VCardText>
@@ -283,8 +283,8 @@ function beforeMountHandler() {
     } else {
       isAm.value = true;
     }
-    hourStr.value = `${(hr ?? 12) % 12}`.padStart(2, '0');
-    minuteStr.value = min.toString() ?? '00';
+    hourStr.value = `${(hr ?? 12) % 12}`;
+    minuteStr.value = min.toString().padStart(2, '0') ?? '00';
   } else {
     hourStr.value = `${hr.toString().padStart(2, '0')}`;
     minuteStr.value = `${min.toString().padStart(2, '0')}`;
