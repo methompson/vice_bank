@@ -35,7 +35,7 @@ import { arrayToObject } from '@/utils/array_to_obj';
 
 import TaskCard from '@/views/components/deposits/task_card.vue';
 import CommonDialog from '@/views/components/common_dialog.vue';
-import TextDatePicker from '@/views/components/text_date_picker.vue';
+import TextDatePicker from '@/views/components/utility/text_date_picker.vue';
 
 const props = withDefaults(
   defineProps<{

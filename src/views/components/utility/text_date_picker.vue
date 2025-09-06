@@ -33,7 +33,6 @@ const datePretty = computed(() => {
 const dateStr = ref(datePretty.value);
 
 watch(date, (newDate) => {
-  console.log('changed');
   dateStr.value = datePretty.value;
   dateModel.value = newDate;
 });

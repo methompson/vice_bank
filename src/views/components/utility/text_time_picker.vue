@@ -87,7 +87,6 @@ const hourStr = ref('12');
 const minuteStr = ref('0');
 
 watch(hourStr, (newVal) => {
-  console.log('Hour string changed:', newVal);
   // Empty string, leave as-is for now
   if (newVal.length === 0) {
     return;

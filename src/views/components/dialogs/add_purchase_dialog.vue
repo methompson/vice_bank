@@ -46,7 +46,7 @@ import { Purchase } from '@vice_bank/models/purchase';
 
 import CommonDialog from '@/views/components/common_dialog.vue';
 import RewardCard from '@/views/components/rewards/reward_card.vue';
-import TextDatePicker from '@/views/components/text_date_picker.vue';
+import TextDatePicker from '@/views/components/utility/text_date_picker.vue';
 import { useViceBankStore } from '@/stores/vice_bank_store';
 import { storeToRefs } from 'pinia';
 import { getTokensEarnedString } from '@/utils/tokens_earned';
