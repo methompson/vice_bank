@@ -1,42 +1,80 @@
 import { defineStore } from 'pinia';
+import { DateTime } from 'luxon';
+
+import { LoggedEvent, LogLevel } from '@/models/logger_types';
+import {
+  addLogToDB,
+  deleteDB,
+  deleteOldLogs,
+  readLogsFromDB,
+} from '@/stores/logger_db_connection';
+
+interface AddLogOptions {
+  timestamp?: DateTime<true>;
+}
 
 export const useLoggerStore = defineStore('loggerStore', () => {
-  let db: IDBDatabase | undefined = undefined;
-
-  /**
-   * Initialize the IndexedDB database and object store
-   */
-  async function initialize() {
-    const result = window.indexedDB.open('myDatabase', 1);
-    result.onsuccess = (ev) => {
-      db = result.result;
-    };
-  }
-
-  /**
-   * Stringifies the logs object and saves it to local storage
-   * Checks the total amount of logs that exist. If there are
-   * too many logs, it will call the trimLogs function, then
-   * re-run the saveLogsToLocalStorage function
-   */
-  function saveLogsToLocalStorage() {}
-
   /**
    * Keep only so many logs to avoid hitting a browser quota
    * Unlikely to be reached, but nice to have.
    */
-  function trimLogs() {}
+  async function trimLogs() {
+    await deleteOldLogs();
+  }
+
+  async function getRecentLogs() {
+    return await readLogsFromDB();
+  }
 
   /**
    * Base function for adding logs. Should not be exposed as an
    * exported function. "Helper" functions like addErrorLog should
    * call this function.
    */
-  function addLog() {}
-  function addInfoLog() {}
-  function addWarningLog() {}
-  function addErrorLog() {}
-  function clearLogs() {}
+  async function addLog(log: LoggedEvent) {
+    await addLogToDB(log);
+  }
 
-  return {};
+  async function addInfoLog(msg: string, options?: AddLogOptions) {
+    const log = new LoggedEvent({
+      id: crypto.randomUUID(),
+      level: LogLevel.Info,
+      message: msg,
+      timestamp: options?.timestamp?.toISO() ?? DateTime.now().toISO(),
+    });
+    return addLog(log);
+  }
+
+  async function addWarningLog(msg: string, options?: AddLogOptions) {
+    const log = new LoggedEvent({
+      id: crypto.randomUUID(),
+      level: LogLevel.Warning,
+      message: msg,
+      timestamp: options?.timestamp?.toISO() ?? DateTime.now().toISO(),
+    });
+    return addLog(log);
+  }
+
+  async function addErrorLog(msg: string, options?: AddLogOptions) {
+    const log = new LoggedEvent({
+      id: crypto.randomUUID(),
+      level: LogLevel.Error,
+      message: msg,
+      timestamp: options?.timestamp?.toISO() ?? DateTime.now().toISO(),
+    });
+    return addLog(log);
+  }
+
+  async function clearLogs() {
+    await deleteDB();
+  }
+
+  return {
+    addInfoLog,
+    addWarningLog,
+    addErrorLog,
+    clearLogs,
+    trimLogs,
+    getRecentLogs,
+  };
 });

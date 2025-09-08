@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs, watch, type Ref } from 'vue';
+import { computed, ref, toRefs, type Ref } from 'vue';
 import { DateTime } from 'luxon';
 
 import type { Action } from '@vice_bank/models/action';

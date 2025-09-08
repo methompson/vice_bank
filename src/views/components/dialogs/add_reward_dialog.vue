@@ -69,8 +69,8 @@ const canDeposit = computed(() => {
 });
 
 function saveReward() {
-  const id = props.reward?.id ?? uuidv4();
-  const vbUserId = props.reward?.vbUserId ?? vbStore.currentUser?.id;
+  const id = reward.value?.id ?? uuidv4();
+  const vbUserId = reward.value?.vbUserId ?? vbStore.currentUser?.id;
 
   if (!vbUserId) {
     console.error('No user ID found');

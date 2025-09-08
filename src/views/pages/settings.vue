@@ -1,4 +1,8 @@
 <template>
+  <VDialog v-model="showLogs" fullscreen>
+    <Logs @close="closeLogsDialog" />
+  </VDialog>
+
   <VContainer>
     <VRow>
       <VCol>
@@ -14,19 +18,9 @@
 
     <VRow>
       <VCol>
-        <span>Total Tasks in task queue: 0</span>
-      </VCol>
-    </VRow>
-
-    <VRow>
-      <VCol>
-        <VBtn color="primary" class="w-100">Clear Task Queue</VBtn>
-      </VCol>
-    </VRow>
-
-    <VRow>
-      <VCol>
-        <VBtn color="primary" class="w-100">Logging</VBtn>
+        <VBtn @click="showLogsDialog" color="primary" class="w-100">
+          Logging
+        </VBtn>
       </VCol>
     </VRow>
 
@@ -43,7 +37,19 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import { useAuthComposable } from '@/views/pages/auth_composable';
+import Logs from '@/views/components/settings/logs.vue';
 
 const { logout } = useAuthComposable();
+
+const showLogs = ref(false);
+
+function showLogsDialog() {
+  showLogs.value = true;
+}
+function closeLogsDialog() {
+  showLogs.value = false;
+}
 </script>
