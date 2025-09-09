@@ -30,12 +30,7 @@
                   type="password"
                 />
 
-                <VBtn
-                  :disabled="!validInputs"
-                  @click="login"
-                  color="primary"
-                  depressed
-                >
+                <VBtn :disabled="!validInputs" @click="login" color="tertiary">
                   Login
                 </VBtn>
               </VForm>
