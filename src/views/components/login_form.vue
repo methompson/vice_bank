@@ -1,5 +1,8 @@
 <template>
-  <div class="loginFormContainer">
+  <div
+    class="d-flex flex-column justify-center align-center"
+    style="height: 100dvh"
+  >
     <VContainer>
       <VRow justify="center">
         <VCol cols="12" sm="6" align-self="center">
@@ -108,12 +111,3 @@ async function login() {
   loggingIn.value = false;
 }
 </script>
-
-<style lang="scss" scoped>
-.loginFormContainer {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-</style>

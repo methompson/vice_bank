@@ -15,7 +15,11 @@
     <h1>Create User</h1>
   </div>
 
-  <div class="d-flex flex-column justify-center align-center h-screen" v-else>
+  <div
+    class="d-flex flex-column justify-center align-center"
+    style="height: 100dvh"
+    v-else
+  >
     <VCard :loading="true" max-width="400">
       <VCardText>
         <VRow align="center">
