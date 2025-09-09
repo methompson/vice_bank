@@ -8,23 +8,52 @@ import * as directives from 'vuetify/directives';
 
 const lightTheme: ThemeDefinition = {
   colors: {
-    primary: '#03A9F4',
-    'primary-darken-1': '#0277BD',
-    'surface-light': '#E1F5FE',
-    'surface-dark': '#B3E5FC',
+    background: '#F9FFF2',
+    surface: '#F9FFF2',
+    'surface-light': '#FFFFFF',
+    'surface-dark': '#E5FCC2',
+    primary: '#9DE0AD',
+    secondary: '#6DC5C0',
+    tertiary: '#547890',
+    // 'primary-darken-1': '#0277BD',
     error: '#FF1744',
   },
 };
 
 const darkTheme: ThemeDefinition = {
   colors: {
-    primary: '#0277BD',
-    'primary-darken-1': '#01579B',
-    'surface-light': '#01579B',
-    'surface-dark': '#003561',
+    background: '#263640',
+    surface: '#263640',
+    'surface-light': '#435E70',
+    'surface-dark': '#131B20',
+    primary: '#37ae55',
+    secondary: '#2c6d6a',
+    tertiary: '#547890',
+    // 'primary-darken-1': '#01579B',
+    // 'surface-light': '#01579B',
+    // 'surface-dark': '#003561',
     error: '#FF1744',
   },
 };
+// const lightTheme: ThemeDefinition = {
+//   colors: {
+//     primary: '#03A9F4',
+//     'primary-darken-1': '#0277BD',
+//     'surface-light': '#E1F5FE',
+//     'surface-dark': '#B3E5FC',
+//     error: '#FF1744',
+//   },
+// };
+
+// const darkTheme: ThemeDefinition = {
+//   colors: {
+//     primary: '#0277BD',
+//     'primary-darken-1': '#01579B',
+//     'surface-light': '#01579B',
+//     'surface-dark': '#003561',
+//     error: '#FF1744',
+//   },
+// };
 
 export function getVuetify() {
   const vuetify = createVuetify({

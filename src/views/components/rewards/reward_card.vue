@@ -1,5 +1,5 @@
 <template>
-  <VCard color="orange">
+  <VCard color="primary">
     <VCardText class="pa-2">
       <VRow align="center">
         <VCol class="actionCardTitle">

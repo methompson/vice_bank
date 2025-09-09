@@ -20,7 +20,7 @@ export default defineConfig({
         theme_color: '',
         icons: [
           {
-            src: 'vb_logo_1024.png',
+            src: 'vb_logo_1024_transparent.png',
             sizes: '1024x1024',
             type: 'image/png',
           },

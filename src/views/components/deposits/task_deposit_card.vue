@@ -1,5 +1,5 @@
 <template>
-  <VCard>
+  <VCard color="secondary">
     <VCardText>
       <VRow>
         <VCol>
