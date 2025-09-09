@@ -153,7 +153,10 @@ import { useLoggerStore } from '@/stores/logger_store';
 
 import { Task } from '@vice_bank/models/task';
 
-import { useHistoryComposable } from '@/views/pages/history_composable';
+import {
+  fetchActionAndTaskData,
+  useHistoryComposable,
+} from '@/views/pages/history_composable';
 import AddActionTaskDialog from '@/views/components/dialogs/add_action_task_dialog.vue';
 import ActionCard from '@/views/components/deposits/action_card.vue';
 import TaskCard from '@/views/components/deposits/task_card.vue';
@@ -199,12 +202,7 @@ async function getAllData() {
 
   loading.value = true;
   try {
-    await Promise.all([
-      vbStore.getActions(vbUserId),
-      vbStore.getTasks(vbUserId),
-      vbStore.getActionDeposits(vbUserId),
-      vbStore.getTaskDeposits(vbUserId),
-    ]);
+    await fetchActionAndTaskData(vbUserId);
   } catch (e) {
     const msg = `Error fetching actions and tasks`;
 

@@ -117,7 +117,10 @@ import { useLoggerStore } from '@/stores/logger_store';
 
 import { Reward } from '@vice_bank/models/reward';
 import type { Purchase } from '@vice_bank/models/purchase';
-import { useHistoryComposable } from '@/views/pages/history_composable';
+import {
+  fetchPurchaseData,
+  useHistoryComposable,
+} from '@/views/pages/history_composable';
 
 import AddRewardDialog from '@/views/components/dialogs/add_reward_dialog.vue';
 import RewardCard from '@/views/components/rewards/reward_card.vue';
@@ -359,10 +362,7 @@ async function getAllData() {
   }
 
   try {
-    await Promise.all([
-      vbStore.getRewards(vbUserId),
-      vbStore.getPurchases(vbUserId),
-    ]);
+    await fetchPurchaseData(vbUserId);
   } catch (e) {
     const msg = 'Error fetching rewards or purchases';
     loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {

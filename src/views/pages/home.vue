@@ -36,14 +36,29 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs } from 'vue';
+import { computed, onBeforeMount, toRefs, watch } from 'vue';
 import { DateTime } from 'luxon';
 
 import { useViceBankStore } from '@/stores/vice_bank_store';
+import {
+  fetchActionAndTaskData,
+  fetchPurchaseData,
+} from './history_composable';
+import { useLoggerStore } from '@/stores/logger_store';
+import { useAppStore } from '@/stores/app_store';
 
 const vbStore = useViceBankStore();
+const appStore = useAppStore();
+const loggerStore = useLoggerStore();
 
-const { actionDeposits, taskDeposits, purchases } = toRefs(vbStore);
+const { actionDeposits, taskDeposits, purchases, currentUser } =
+  toRefs(vbStore);
+
+watch(currentUser, (newUser) => {
+  if (newUser) {
+    getAllData();
+  }
+});
 
 function sevenDaysAgo() {
   return DateTime.now().minus({ days: 7 }).startOf('day');
@@ -86,4 +101,36 @@ const lastWeekTokensSpent = computed(() => {
 
   return totalTokens;
 });
+
+async function getAllData() {
+  try {
+    const vbUserId = currentUser.value?.id;
+
+    if (!vbUserId) {
+      return;
+    }
+
+    await Promise.all([
+      fetchActionAndTaskData(vbUserId),
+      fetchPurchaseData(vbUserId),
+    ]);
+  } catch (e) {
+    const msg = 'Error fetching data';
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
+    console.error(msg, e);
+    appStore.setErrorMessage({
+      message: msg,
+    });
+  }
+}
+
+async function beforeMountHandler() {
+  getAllData();
+}
+onBeforeMount(beforeMountHandler);
 </script>
