@@ -36,6 +36,10 @@
                 <VBtn :disabled="!validInputs" @click="login" color="tertiary">
                   Login
                 </VBtn>
+
+                <div class="mt-4">
+                  Copyright 2023 - {{ currentYear }} Mat Thompson
+                </div>
               </VForm>
             </VCardText>
           </VCard>
@@ -62,6 +66,10 @@ watch(loginFormRef, (newValue) => {
   if (newValue && newValue.$el) {
     newValue.$el.addEventListener('keyup', formKeyUpHandler);
   }
+});
+
+const currentYear = computed(() => {
+  return new Date().getFullYear();
 });
 
 const validInputs = computed(() => {

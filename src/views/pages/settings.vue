@@ -31,13 +31,13 @@
     </VRow>
 
     <VRow>
-      <VCol> Copyright 2025 </VCol>
+      <VCol> Copyright 2023 - {{ currentYear }} Mat Thompson</VCol>
     </VRow>
   </VContainer>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { useAuthComposable } from '@/views/pages/auth_composable';
 import Logs from '@/views/components/settings/logs.vue';
@@ -45,6 +45,9 @@ import Logs from '@/views/components/settings/logs.vue';
 const { logout } = useAuthComposable();
 
 const showLogs = ref(false);
+const currentYear = computed(() => {
+  return new Date().getFullYear();
+});
 
 function showLogsDialog() {
   showLogs.value = true;
