@@ -2,7 +2,7 @@
   <VContainer>
     <VRow>
       <VCol cols="12" sm="6">
-        <VCard :color="cardColor">
+        <VCard color="surface">
           <VCardTitle> Past Week Deposits </VCardTitle>
 
           <VCardText>
@@ -17,7 +17,7 @@
       </VCol>
 
       <VCol cols="12" sm="6">
-        <VCard :color="cardColor">
+        <VCard color="surface">
           <VCardTitle> Past Week Purchases </VCardTitle>
 
           <VCardText>
@@ -36,21 +36,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs, type ComputedRef } from 'vue';
+import { computed, toRefs } from 'vue';
 import { DateTime } from 'luxon';
 
-import { useAppStore } from '@/stores/app_store';
 import { useViceBankStore } from '@/stores/vice_bank_store';
 
-const appStore = useAppStore();
 const vbStore = useViceBankStore();
 
 const { actionDeposits, taskDeposits, purchases } = toRefs(vbStore);
-
-const cardColor = computed(() => {
-  // return appStore.isDarkMode ? 'surface-dark' : 'surface-light';
-  return 'surface';
-});
 
 function sevenDaysAgo() {
   return DateTime.now().minus({ days: 7 }).startOf('day');
