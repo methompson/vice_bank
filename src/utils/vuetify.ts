@@ -6,6 +6,8 @@ import { createVuetify, type ThemeDefinition } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 
+import { VPullToRefresh } from 'vuetify/labs/VPullToRefresh';
+
 const lightTheme: ThemeDefinition = {
   colors: {
     background: '#F9FFF2',
@@ -63,7 +65,10 @@ export function getVuetify() {
         dark: darkTheme,
       },
     },
-    components,
+    components: {
+      ...components,
+      VPullToRefresh,
+    },
     directives,
     icons: {
       defaultSet: 'mdi',

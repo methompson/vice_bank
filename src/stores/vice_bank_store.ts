@@ -249,6 +249,7 @@ export const useViceBankStore = defineStore('viceBankStore', () => {
     // Users
     currentUser,
     currentUserTokens,
+    getUserTokens,
     getUser,
     addUser,
     updateUser,

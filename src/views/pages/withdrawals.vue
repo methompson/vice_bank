@@ -381,6 +381,5 @@ async function getAllData() {
 async function beforeMountHandler() {
   await getAllData();
 }
-
 onBeforeMount(beforeMountHandler);
 </script>
