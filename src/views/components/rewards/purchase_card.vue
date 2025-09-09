@@ -73,7 +73,7 @@ function deletePurchase() {
 }
 
 const purchaseDate = computed(() => {
-  return purchase.value.date.toLocaleString(DateTime.DATE_MED);
+  return purchase.value.date.toLocaleString(DateTime.DATETIME_MED);
 });
 
 const tokenName = computed(() => {

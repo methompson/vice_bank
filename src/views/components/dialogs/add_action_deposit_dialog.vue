@@ -39,6 +39,7 @@
 <script setup lang="ts">
 import { computed, ref, toRefs, type Ref } from 'vue';
 import { DateTime } from 'luxon';
+import { isUndefinedOrNull } from '@metools/tcheck';
 
 import type { Action } from '@vice_bank/models/action';
 import { ActionDeposit } from '@vice_bank/models/action_deposit';
@@ -48,7 +49,6 @@ import ActionCard from '@/views/components/deposits/action_card.vue';
 
 import TextDatePicker from '@/views/components/utility/text_date_picker.vue';
 import TextTimePicker from '@/views/components/utility/text_time_picker.vue';
-import { isUndefinedOrNull } from '@metools/tcheck';
 
 const props = withDefaults(
   defineProps<{

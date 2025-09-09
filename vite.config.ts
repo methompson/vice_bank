@@ -14,6 +14,9 @@ export default defineConfig({
     vueDevTools(),
     VitePWA({
       manifest: {
+        name: 'Vice Bank',
+        short_name: 'Vice Bank',
+        description: 'A manager for your personal vices',
         theme_color: '',
         icons: [
           {
