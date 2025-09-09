@@ -17,12 +17,19 @@ export default defineConfig({
         name: 'Vice Bank',
         short_name: 'Vice Bank',
         description: 'A manager for your personal vices',
-        theme_color: '',
+        theme_color: '#F9FFF2',
         icons: [
           {
             src: 'vb_logo_1024_transparent.png',
             sizes: '1024x1024',
             type: 'image/png',
+            purpose: 'maskable',
+          },
+          {
+            src: 'vb_logo_180.png',
+            sizes: '180x180',
+            type: 'image/png',
+            purpose: 'maskable',
           },
         ],
       },

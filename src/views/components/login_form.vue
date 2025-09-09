@@ -7,7 +7,7 @@
             <VCardText>
               <VForm class="text-center" ref="loginFormRef">
                 <img
-                  src="/vb_logo_1024.png"
+                  src="/vb_logo_1024_transparent.png"
                   alt="logo"
                   width="128"
                   height="128"
