@@ -15,10 +15,31 @@
     <h1>Create User</h1>
   </div>
 
-  <div v-else>
-    <h1>Loading...</h1>
-
-    <p>Please wait while we load your data.</p>
+  <div
+    class="d-flex flex-column justify-center align-center"
+    style="height: 100dvh"
+    v-else
+  >
+    <VCard :loading="true" max-width="400">
+      <VCardText>
+        <VRow align="center">
+          <VCol class="text-center">
+            <img
+              src="/vb_logo_1024_transparent.png"
+              alt="logo"
+              width="128"
+              height="128"
+            />
+          </VCol>
+          <VCol class="text-center" cols="12">
+            <h1>Loading...</h1>
+          </VCol>
+          <VCol class="text-center" cols="12">
+            <p>Please wait while we load your data.</p>
+          </VCol>
+        </VRow>
+      </VCardText>
+    </VCard>
   </div>
 </template>
 

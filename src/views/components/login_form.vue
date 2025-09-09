@@ -1,5 +1,8 @@
 <template>
-  <div class="loginFormContainer">
+  <div
+    class="d-flex flex-column justify-center align-center"
+    style="height: 100dvh"
+  >
     <VContainer>
       <VRow justify="center">
         <VCol cols="12" sm="6" align-self="center">
@@ -7,7 +10,7 @@
             <VCardText>
               <VForm class="text-center" ref="loginFormRef">
                 <img
-                  src="/vb_logo_1024.png"
+                  src="/vb_logo_1024_transparent.png"
                   alt="logo"
                   width="128"
                   height="128"
@@ -30,14 +33,13 @@
                   type="password"
                 />
 
-                <VBtn
-                  :disabled="!validInputs"
-                  @click="login"
-                  color="primary"
-                  depressed
-                >
+                <VBtn :disabled="!validInputs" @click="login" color="tertiary">
                   Login
                 </VBtn>
+
+                <div class="mt-4">
+                  Copyright 2023 - {{ currentYear }} Mat Thompson
+                </div>
               </VForm>
             </VCardText>
           </VCard>
@@ -64,6 +66,10 @@ watch(loginFormRef, (newValue) => {
   if (newValue && newValue.$el) {
     newValue.$el.addEventListener('keyup', formKeyUpHandler);
   }
+});
+
+const currentYear = computed(() => {
+  return new Date().getFullYear();
 });
 
 const validInputs = computed(() => {
@@ -113,12 +119,3 @@ async function login() {
   loggingIn.value = false;
 }
 </script>
-
-<style lang="scss" scoped>
-.loginFormContainer {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-</style>

@@ -23,6 +23,11 @@ const router = createRouter({
       name: 'settings',
       component: () => import('@/views/pages/settings.vue'),
     },
+    {
+      path: '/debug',
+      name: 'debug',
+      component: () => import('@/views/pages/debug.vue'),
+    },
   ],
 });
 

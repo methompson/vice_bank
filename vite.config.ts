@@ -14,12 +14,21 @@ export default defineConfig({
     vueDevTools(),
     VitePWA({
       manifest: {
-        theme_color: '',
+        name: 'Vice Bank',
+        short_name: 'Vice Bank',
+        description: 'A manager for your personal vices',
+        theme_color: '#F9FFF2',
         icons: [
           {
-            src: 'vb_logo_1024.png',
+            src: 'vb_logo_1024_transparent.png',
             sizes: '1024x1024',
             type: 'image/png',
+          },
+          {
+            src: 'vb_logo_180_transparent.png',
+            sizes: '180x180',
+            type: 'image/png',
+            purpose: 'any maskable',
           },
         ],
       },

@@ -6,8 +6,12 @@
           <RewardCard :reward="reward" :showMenu="false" />
         </VCol>
 
-        <VCol cols="12" class="text-center">
+        <VCol cols="6" class="text-center">
           <TextDatePicker v-model="addOnDate" />
+        </VCol>
+
+        <VCol cols="6" class="text-center">
+          <TextTimePicker v-model="addOnTime" />
         </VCol>
 
         <VCol class="text-center" cols="12">
@@ -40,16 +44,19 @@
 <script setup lang="ts">
 import { computed, ref, toRefs, type Ref } from 'vue';
 import { DateTime } from 'luxon';
+import { storeToRefs } from 'pinia';
+import { isUndefinedOrNull } from '@metools/tcheck';
 
 import type { Reward } from '@vice_bank/models/reward';
 import { Purchase } from '@vice_bank/models/purchase';
 
+import { useViceBankStore } from '@/stores/vice_bank_store';
+import { getTokensEarnedString } from '@/utils/tokens_earned';
+
 import CommonDialog from '@/views/components/common_dialog.vue';
 import RewardCard from '@/views/components/rewards/reward_card.vue';
-import TextDatePicker from '@/views/components/text_date_picker.vue';
-import { useViceBankStore } from '@/stores/vice_bank_store';
-import { storeToRefs } from 'pinia';
-import { getTokensEarnedString } from '@/utils/tokens_earned';
+import TextDatePicker from '@/views/components/utility/text_date_picker.vue';
+import TextTimePicker from '@/views/components/utility/text_time_picker.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -71,18 +78,37 @@ const emit = defineEmits<{
 const vbStore = useViceBankStore();
 const { currentUserTokens } = storeToRefs(vbStore);
 
-const quantity = ref(0);
-
 const tokensAvailable = computed(() =>
   getTokensEarnedString(currentUserTokens.value),
 );
 
 const addOnDate: Ref<DateTime<true>> = ref(DateTime.now().startOf('day'));
+const addOnTime: Ref<string> = ref(
+  DateTime.now().toLocaleString(DateTime.TIME_24_SIMPLE),
+);
+
+const quantity = ref(0);
+
+const depositDateTime = computed(() => {
+  const [hr, min] = addOnTime.value
+    .split(':')
+    .map((v) => Number.parseInt(v, 10));
+
+  if (
+    isUndefinedOrNull(hr) ||
+    isUndefinedOrNull(min) ||
+    Number.isNaN(hr) ||
+    Number.isNaN(min)
+  ) {
+    return addOnDate.value;
+  }
+
+  return addOnDate.value.set({ hour: hr, minute: min });
+});
 
 const purchase = computed(() => {
-  const date = addOnDate.value ?? DateTime.now().startOf('day');
   return Purchase.fromReward(reward.value, quantity.value, {
-    date,
+    date: depositDateTime.value,
   });
 });
 

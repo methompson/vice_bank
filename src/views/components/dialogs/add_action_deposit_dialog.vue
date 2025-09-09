@@ -37,8 +37,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs, watch, type Ref } from 'vue';
+import { computed, ref, toRefs, type Ref } from 'vue';
 import { DateTime } from 'luxon';
+import { isUndefinedOrNull } from '@metools/tcheck';
 
 import type { Action } from '@vice_bank/models/action';
 import { ActionDeposit } from '@vice_bank/models/action_deposit';
@@ -46,9 +47,8 @@ import { ActionDeposit } from '@vice_bank/models/action_deposit';
 import CommonDialog from '@/views/components/common_dialog.vue';
 import ActionCard from '@/views/components/deposits/action_card.vue';
 
-import TextDatePicker from '@/views/components/text_date_picker.vue';
-import TextTimePicker from '@/views/components/text_time_picker.vue';
-import { isUndefinedOrNull } from '@metools/tcheck';
+import TextDatePicker from '@/views/components/utility/text_date_picker.vue';
+import TextTimePicker from '@/views/components/utility/text_time_picker.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -70,10 +70,6 @@ const addOnDate: Ref<DateTime<true>> = ref(DateTime.now().startOf('day'));
 const addOnTime: Ref<string> = ref(
   DateTime.now().toLocaleString(DateTime.TIME_24_SIMPLE),
 );
-
-watch(addOnTime, (newVal) => {
-  console.log('addOnTime changed', newVal);
-});
 
 const quantity = ref(0);
 

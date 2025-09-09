@@ -113,6 +113,8 @@ import {
 
 import { useViceBankStore } from '@/stores/vice_bank_store';
 import { useAppStore } from '@/stores/app_store';
+import { useLoggerStore } from '@/stores/logger_store';
+
 import { Reward } from '@vice_bank/models/reward';
 import type { Purchase } from '@vice_bank/models/purchase';
 import { useHistoryComposable } from '@/views/pages/history_composable';
@@ -124,6 +126,7 @@ import PurchaseCard from '@/views/components/rewards/purchase_card.vue';
 
 const vbStore = useViceBankStore();
 const appStore = useAppStore();
+const loggerStore = useLoggerStore();
 
 const { currentUser, rewards, purchases } = toRefs(vbStore);
 
@@ -161,9 +164,16 @@ async function saveNewReward(reward: Reward) {
 
     closeAddRewardDialog();
   } catch (e) {
-    console.error(e);
+    const msg = 'Error saving reward';
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
+    console.error(msg, e);
     appStore.setErrorMessage({
-      message: 'Failed to save reward',
+      message: msg,
     });
   }
   loading.value = false;
@@ -200,9 +210,16 @@ async function saveNewPurchase(purchase: Purchase) {
       message: 'Purchase saved successfully',
     });
   } catch (e) {
-    console.error('Error saving purchase:', e);
+    const msg = 'Error Saving Purchase';
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
+    console.error(msg, e);
     appStore.setErrorMessage({
-      message: 'Failed to save purchase',
+      message: msg,
     });
   }
   closeAddWithdrawalDialog();
@@ -232,9 +249,16 @@ async function updateReward(reward: Reward) {
     });
     showEditReward.value = false;
   } catch (e) {
-    console.error(e);
+    const msg = 'Error updating reward';
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
+    console.error(msg, e);
     appStore.setErrorMessage({
-      message: 'Error updating reward',
+      message: msg,
     });
   } finally {
     loading.value = false;
@@ -258,9 +282,16 @@ async function deleteReward(reward: Reward) {
       message: 'Reward deleted successfully',
     });
   } catch (e) {
-    console.error(e);
+    const msg = 'Error deleting reward';
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
+    console.error(msg, e);
     appStore.setErrorMessage({
-      message: 'Error deleting reward',
+      message: msg,
     });
   }
 
@@ -302,9 +333,16 @@ async function deletePurchase(purchase: Purchase) {
       message: 'Purchase deleted successfully',
     });
   } catch (e) {
-    console.error('Error deleting purchase:', e);
+    const msg = 'Error deleting purchase';
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
+    console.error(msg, e);
     appStore.setErrorMessage({
-      message: 'Error deleting purchase',
+      message: msg,
     });
   }
 
@@ -326,9 +364,16 @@ async function getAllData() {
       vbStore.getPurchases(vbUserId),
     ]);
   } catch (e) {
-    console.error('Error fetching rewards:', e);
+    const msg = 'Error fetching rewards or purchases';
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
+    console.error(msg, e);
     appStore.setErrorMessage({
-      message: 'Failed to fetch rewards',
+      message: msg,
     });
   }
 }

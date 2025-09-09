@@ -1,5 +1,5 @@
 <template>
-  <VCard>
+  <VCard color="secondary">
     <VCardText>
       <VRow>
         <VCol>
@@ -61,7 +61,7 @@ const emit = defineEmits<{
 }>();
 
 const depositDate = computed(() => {
-  return taskDeposit.value.date.toLocaleString(DateTime.DATE_MED);
+  return taskDeposit.value.date.toLocaleString(DateTime.DATETIME_MED);
 });
 
 function deleteTaskDeposit() {

@@ -146,12 +146,14 @@ import {
 } from 'vue';
 
 import { Action } from '@vice_bank/models/action';
+
 import { useViceBankStore } from '@/stores/vice_bank_store';
-
 import { useAppStore } from '@/stores/app_store';
-import { Task } from '@vice_bank/models/task';
-import { useHistoryComposable } from '@/views/pages/history_composable';
+import { useLoggerStore } from '@/stores/logger_store';
 
+import { Task } from '@vice_bank/models/task';
+
+import { useHistoryComposable } from '@/views/pages/history_composable';
 import AddActionTaskDialog from '@/views/components/dialogs/add_action_task_dialog.vue';
 import ActionCard from '@/views/components/deposits/action_card.vue';
 import TaskCard from '@/views/components/deposits/task_card.vue';
@@ -167,6 +169,7 @@ import { TaskDeposit } from '@vice_bank/models/task_deposit';
 
 const vbStore = useViceBankStore();
 const appStore = useAppStore();
+const loggerStore = useLoggerStore();
 
 const { actions, tasks, actionDeposits, taskDeposits, currentUser } =
   toRefs(vbStore);
@@ -203,9 +206,18 @@ async function getAllData() {
       vbStore.getTaskDeposits(vbUserId),
     ]);
   } catch (e) {
-    console.error('Error fetching actions:', e);
+    const msg = `Error fetching actions and tasks`;
+
+    console.error(msg, e);
     appStore.setErrorMessage({
-      message: 'Error fetching actions',
+      message: msg,
+    });
+
+    loggerStore.addErrorLog(`${msg} ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
     });
   }
 
@@ -238,9 +250,16 @@ async function saveNewAction(action: Action) {
       message: 'Action saved successfully',
     });
   } catch (e) {
-    console.error('Error saving action:', e);
+    const msg = `Error saving action`;
+    console.error(msg, e);
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
     appStore.setErrorMessage({
-      message: 'Error saving action',
+      message: msg,
     });
   }
 
@@ -259,9 +278,16 @@ async function saveNewTask(task: Task) {
       message: 'Task saved successfully',
     });
   } catch (e) {
-    console.error('Error saving task:', e);
+    const msg = `Error saving task`;
+    console.error(msg, e);
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
     appStore.setErrorMessage({
-      message: 'Error saving task',
+      message: msg,
     });
   }
 
@@ -280,9 +306,16 @@ async function deleteAction(action: Action) {
       message: 'Action deleted successfully',
     });
   } catch (e) {
-    console.error('Error deleting action:', e);
+    const msg = `Error deleting action`;
+    console.error(msg, e);
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
     appStore.setErrorMessage({
-      message: 'Error deleting action',
+      message: msg,
     });
   }
 
@@ -298,9 +331,16 @@ async function deleteTask(task: Task) {
       message: 'Task deleted successfully',
     });
   } catch (e) {
-    console.error('Error deleting task:', e);
+    const msg = `Error deleting task`;
+    console.error(msg, e);
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
     appStore.setErrorMessage({
-      message: 'Error deleting task',
+      message: msg,
     });
   }
 
@@ -343,9 +383,16 @@ async function updateAction(action: Action) {
       message: 'Action updated successfully',
     });
   } catch (e) {
-    console.error('Error updating action:', e);
+    const msg = `Error updating action`;
+    console.error(msg, e);
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
     appStore.setErrorMessage({
-      message: 'Error updating action',
+      message: msg,
     });
   }
 
@@ -362,9 +409,16 @@ async function updateTask(task: Task) {
       message: 'Task updated successfully',
     });
   } catch (e) {
-    console.error('Error updating task:', e);
+    const msg = `Error updating task`;
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
+    console.error(msg, e);
     appStore.setErrorMessage({
-      message: 'Error updating task',
+      message: msg,
     });
   }
 
@@ -412,9 +466,16 @@ async function saveNewActionDeposit(deposit: ActionDeposit) {
       message: 'Action Deposit saved successfully',
     });
   } catch (e) {
-    console.error('Error saving action deposit:', e);
+    const msg = `Error saving action deposit`;
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
+    console.error(msg, e);
     appStore.setErrorMessage({
-      message: 'Error saving action deposit',
+      message: msg,
     });
   }
 
@@ -455,9 +516,16 @@ async function saveNewTaskDeposit(deposit: TaskDeposit) {
       message: 'Task Deposit saved successfully',
     });
   } catch (e) {
-    console.error('Error saving task deposit:', e);
+    const msg = `Error saving task deposit`;
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
+    console.error(msg, e);
     appStore.setErrorMessage({
-      message: 'Error saving task deposit',
+      message: msg,
     });
   }
 
@@ -526,9 +594,16 @@ async function deleteActionDeposit(actionDeposit: ActionDeposit) {
       message: 'Action Deposit deleted successfully',
     });
   } catch (e) {
-    console.error('Error deleting action deposit:', e);
+    const msg = `Error deleting action deposit`;
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
+    console.error(msg, e);
     appStore.setErrorMessage({
-      message: 'Error deleting action deposit',
+      message: msg,
     });
   }
 
@@ -544,9 +619,16 @@ async function deleteTaskDeposit(taskDeposit: TaskDeposit) {
       message: 'Task Deposit deleted successfully',
     });
   } catch (e) {
-    console.error('Error deleting task deposit:', e);
+    const msg = `Error deleting task deposit`;
+    loggerStore.addErrorLog(`${msg}: ${e}`).catch((err) => {
+      console.error(`Failed to log error: ${err}`);
+      appStore.setErrorMessage({
+        message: `Failed to log error: ${err}`,
+      });
+    });
+    console.error(msg, e);
     appStore.setErrorMessage({
-      message: 'Error deleting task deposit',
+      message: msg,
     });
   }
 
